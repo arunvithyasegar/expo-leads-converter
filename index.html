@@ -22,16 +22,17 @@
 
     <!-- Top Sticky Header & Navigation -->
     <header class="header-top">
+      <!-- Tier 1: Primary Brand Navigation & Action Command Bar -->
       <div class="header-container">
         <!-- Brand Info -->
         <a href="#dashboard" class="brand-section" id="brandLogoLink">
           <div class="brand-mark">A</div>
           <div class="brand-info">
             <div class="brand-title">
-              Anna Incubator
+              <span>Anna Incubator</span>
               <span class="event-tag">ETM 2026 · Goa</span>
             </div>
-            <div class="brand-sub">Energy Technology & Innovation Meet · Lead Conversion CRM</div>
+            <div class="brand-sub">Energy Technology & Innovation Meet · CRM</div>
           </div>
         </a>
 
@@ -57,44 +58,8 @@
           </button>
         </nav>
 
-        <!-- Header Actions -->
+        <!-- Primary Header Action Buttons (Always fully visible on right) -->
         <div class="header-actions">
-          <!-- IRCTC Live Running Clock & 5-Minute Alarm Chime Widget -->
-          <div class="irctc-clock-alarm-wrap" id="irctcClockAlarmWrap">
-            <div class="irctc-header-clock" id="irctcHeaderClock" title="Official Live Indian Standard Time (IST) · Synced with 29th ETM 2026 Grand Hyatt Goa">
-              <span class="irctc-live-dot" aria-hidden="true"></span>
-              <span class="irctc-clock-date" id="irctcClockDate">24-Oct-2026</span>
-              <span class="irctc-clock-divider">|</span>
-              <span class="irctc-clock-time" id="irctcClockTime">13:57:55</span>
-              <span class="irctc-clock-tz">IST</span>
-            </div>
-
-            <!-- 5-Minute Beep Alarm Toggle Button -->
-            <button class="five-min-alarm-btn" id="btnFiveMinAlarm" type="button" aria-pressed="false" title="5-Minute Desk Alarm: Plays an audible beep chime every 5 minutes during attendee meetings. Click to turn ON / OFF whenever needed." onclick="CRM_UI.toggleFiveMinAlarm()">
-              <span class="alarm-bell-icon" id="alarmBellIcon">🔔</span>
-              <span class="alarm-status-text" id="fiveMinAlarmText">5m Beep: Off</span>
-              <span class="alarm-countdown-badge" id="fiveMinAlarmCountdown" style="display:none;">05:00</span>
-            </button>
-
-            <!-- Quick Sound Test Button -->
-            <button class="alarm-test-btn" id="btnTestAlarmSound" type="button" title="Test 5-minute beep alarm chime right now" onclick="CRM_UI.testAlarmBeep(event)">
-              <span>🔊</span> Test
-            </button>
-          </div>
-
-          <div class="whishper-status-pill offline" id="headerWhishperIndicator" title="Local Whishper Transcription Engine Status (127.0.0.1:8082)">
-            <div class="status-dot dot-yellow" id="whishperDot"></div>
-            <span id="whishperText">Whishper</span>
-          </div>
-          <div class="pg-status-pill offline" id="headerPgIndicator" title="PostgreSQL / pgAdmin 4 Live Database Status (localhost:5432) · Click to configure" onclick="CRM_UI.openPostgresSettingsModal()">
-            <div class="status-dot dot-yellow" id="headerPgDot"></div>
-            <span id="headerPgText">pgAdmin: Connect</span>
-          </div>
-          <div class="sync-status-indicator" id="headerSyncIndicator" title="Click to view Excel & sync status" onclick="window.location.hash='sync'">
-            <div class="status-dot" id="headerSyncDot"></div>
-            <span id="headerSyncText">Sync</span>
-          </div>
-
           <button class="btn btn-outline-teal btn-sm" id="btnHeaderTranscribeAudio" title="Record in-person conversation & auto-transcribe directly to attendee logs">
             <span>🎙️</span> Record
           </button>
@@ -126,6 +91,52 @@
           </button>
         </div>
       </div>
+
+      <!-- Tier 2: Sticky Venue Utility & System Health Ribbon -->
+      <div class="header-utility-bar">
+        <div class="header-utility-inner">
+          <!-- LEFT: Official Live Venue Clock & 5-Minute Desk Alarm Widget (Placed on left as requested) -->
+          <div class="utility-left">
+            <div class="irctc-clock-alarm-wrap" id="irctcClockAlarmWrap">
+              <div class="irctc-header-clock" id="irctcHeaderClock" title="Official Live Indian Standard Time (IST) · Synced with 29th ETM 2026 Grand Hyatt Goa">
+                <span class="irctc-live-dot" aria-hidden="true"></span>
+                <span class="irctc-clock-date" id="irctcClockDate">24-Oct-2026</span>
+                <span class="irctc-clock-divider">|</span>
+                <span class="irctc-clock-time" id="irctcClockTime">13:57:55</span>
+                <span class="irctc-clock-tz">LIVE IST</span>
+              </div>
+
+              <!-- 5-Minute Beep Alarm Toggle Button -->
+              <button class="five-min-alarm-btn" id="btnFiveMinAlarm" type="button" aria-pressed="false" title="5-Minute Desk Alarm: Plays an audible beep chime every 5 minutes during attendee meetings. Click to turn ON / OFF whenever needed." onclick="CRM_UI.toggleFiveMinAlarm()">
+                <span class="alarm-bell-icon" id="alarmBellIcon">🔔</span>
+                <span class="alarm-status-text" id="fiveMinAlarmText">5m Beep: Off</span>
+                <span class="alarm-countdown-badge" id="fiveMinAlarmCountdown" style="display:none;">05:00</span>
+              </button>
+
+              <!-- Quick Sound Test Button -->
+              <button class="alarm-test-btn" id="btnTestAlarmSound" type="button" title="Test 5-minute beep alarm chime right now" onclick="CRM_UI.testAlarmBeep(event)">
+                <span>🔊</span> Test
+              </button>
+            </div>
+          </div>
+
+          <!-- RIGHT: Live System Connectivity & Database Sync Statuses -->
+          <div class="utility-right">
+            <div class="whishper-status-pill offline" id="headerWhishperIndicator" title="Local Whishper Transcription Engine Status (127.0.0.1:8082)" onclick="CRM_UI.checkWhishperStatus(true)">
+              <div class="status-dot dot-yellow" id="whishperDot"></div>
+              <span id="whishperText">Whishper: Standby (Local)</span>
+            </div>
+            <div class="pg-status-pill offline" id="headerPgIndicator" title="PostgreSQL / pgAdmin 4 Live Database Status (localhost:5432) · Click to configure" onclick="CRM_UI.openPostgresSettingsModal()">
+              <div class="status-dot dot-yellow" id="headerPgDot"></div>
+              <span id="headerPgText">pgAdmin: Standby</span>
+            </div>
+            <div class="sync-status-indicator" id="headerSyncIndicator" title="Click to view Excel & sync status" onclick="window.location.hash='sync'">
+              <div class="status-dot" id="headerSyncDot"></div>
+              <span id="headerSyncText">Server & Disk Synced</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </header>
 
     <!-- Event Hero Context Bar -->
@@ -140,14 +151,9 @@
           </p>
         </div>
         <div class="event-banner-tags">
-          <!-- IRCTC Live Venue Clock Tag -->
-          <div class="banner-tag irctc-banner-tag" id="irctcBannerClock" title="Official Live Indian Standard Time (IST) · ETM 2026 Grand Hyatt Goa">
-            <span class="irctc-live-dot" style="width:6px; height:6px;"></span>
-            <span id="irctcBannerDate">24-Oct-2026</span>
-            <span style="opacity:0.4; margin:0 3px;">|</span>
-            <span id="irctcBannerTime" class="irctc-mono-time">13:57:55</span>
-            <span class="badge badge-teal" style="font-size:9px; padding:1px 5px; margin-left:3px; font-weight:800;">LIVE IST</span>
-          </div>
+          <!-- Preserved hidden clock targets for script safety -->
+          <span id="irctcBannerDate" style="display:none;"></span>
+          <span id="irctcBannerTime" style="display:none;"></span>
           <span class="banner-tag">Stall A-14 & DeepTech Lounge</span>
           <span class="banner-tag">Goa, India</span>
           <button class="banner-tag" id="openPrivacyNoticeBtn" style="cursor:pointer; background:rgba(255,255,255,0.22);">

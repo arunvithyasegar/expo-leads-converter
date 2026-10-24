@@ -212,54 +212,63 @@ input, select, textarea, button {
 .brand-section {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   text-decoration: none;
   color: inherit;
+  flex-shrink: 0;
 }
 
 .brand-mark {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   background: linear-gradient(135deg, var(--teal-800), var(--teal-600));
-  border-radius: 12px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
   font-weight: 800;
-  font-size: 20px;
-  box-shadow: 0 4px 10px rgba(11, 67, 75, 0.2);
+  font-size: 19px;
+  box-shadow: 0 3px 8px rgba(11, 67, 75, 0.2);
+  flex-shrink: 0;
 }
 
 .brand-info {
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
 }
 
 .brand-title {
-  font-size: 16px;
+  font-size: 15.5px;
   font-weight: 750;
   color: var(--teal-900);
   letter-spacing: -0.3px;
   display: flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
 }
 
 .brand-sub {
-  font-size: 12px;
+  font-size: 11.5px;
   color: var(--ink-500);
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .event-tag {
-  background: var(--gold-50);
-  border: 1px solid var(--gold-500);
-  color: var(--gold-600);
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  color: #b45309;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   padding: 2px 8px;
   border-radius: var(--radius-full);
+  white-space: nowrap;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
 }
 
 /* Main Navigation Tabs */
@@ -270,12 +279,13 @@ input, select, textarea, button {
   padding: 4px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border-light);
+  flex-shrink: 0;
 }
 
 .nav-tab-btn {
   background: transparent;
   border: none;
-  padding: 7px 14px;
+  padding: 7px 13px;
   border-radius: var(--radius-sm);
   font-weight: 600;
   font-size: 13px;
@@ -284,6 +294,8 @@ input, select, textarea, button {
   display: flex;
   align-items: center;
   gap: 7px;
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: var(--transition-fast);
 }
 
@@ -305,6 +317,7 @@ input, select, textarea, button {
   padding: 1px 7px;
   border-radius: var(--radius-full);
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .nav-badge.alert {
@@ -316,7 +329,88 @@ input, select, textarea, button {
 .header-actions {
   display: flex;
   align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Tier 2: Sticky Venue Utility & System Health Ribbon */
+.header-utility-bar {
+  background: linear-gradient(90deg, #031b1f 0%, #073036 50%, #031b1f 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  padding: 4px 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.header-utility-inner {
+  max-width: 1440px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-sizing: border-box;
+}
+
+.utility-left {
+  display: flex;
+  align-items: center;
   gap: 10px;
+  flex-shrink: 0;
+}
+
+.utility-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* System Connectivity & Database Sync Status Pills */
+.utility-right .whishper-status-pill,
+.utility-right .pg-status-pill,
+.utility-right .sync-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #e2e8f0;
+}
+
+.utility-right .whishper-status-pill:hover,
+.utility-right .pg-status-pill:hover,
+.utility-right .sync-status-indicator:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(94, 234, 212, 0.45);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.utility-right .whishper-status-pill.online,
+.utility-right .pg-status-pill.connected {
+  background: rgba(16, 185, 129, 0.18);
+  border-color: rgba(52, 211, 153, 0.45);
+  color: #a7f3d0;
+}
+
+.utility-right .whishper-status-pill.offline,
+.utility-right .pg-status-pill.offline {
+  background: rgba(245, 158, 11, 0.16);
+  border-color: rgba(251, 191, 36, 0.4);
+  color: #fef08a;
 }
 
 .sync-status-indicator {
@@ -330,6 +424,7 @@ input, select, textarea, button {
   border: 1px solid var(--border-light);
   border-radius: var(--radius-full);
   cursor: pointer;
+  white-space: nowrap;
 }
 
 .status-dot {
@@ -337,10 +432,15 @@ input, select, textarea, button {
   height: 8px;
   border-radius: 50%;
   background-color: var(--emerald-600);
+  flex-shrink: 0;
 }
 
 .status-dot.warning {
   background-color: var(--gold-500);
+}
+
+.status-dot.error {
+  background-color: var(--rose-600);
 }
 
 .status-dot.error {
@@ -484,8 +584,10 @@ input, select, textarea, button {
 
 .event-banner-tags {
   display: flex;
+  align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
 }
 
 .banner-tag {
@@ -497,6 +599,8 @@ input, select, textarea, button {
   font-weight: 500;
   color: #ffffff;
   backdrop-filter: blur(4px);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 /* Main Content Area */
@@ -1623,13 +1727,21 @@ input, select, textarea, button {
 
 /* Responsive adjustments for various screens */
 @media (max-width: 1200px) {
-  .header-container {
-    flex-wrap: wrap;
-    gap: 12px;
-    padding: 10px 16px;
-  }
   .brand-sub {
     display: none;
+  }
+}
+
+@media (max-width: 992px) {
+  .header-container {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 8px 16px;
+  }
+  .header-utility-inner {
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 4px 16px;
   }
 }
 
@@ -1637,16 +1749,20 @@ input, select, textarea, button {
   .header-container {
     flex-direction: column;
     align-items: stretch;
-    gap: 12px;
+    gap: 10px;
   }
   .header-actions {
     justify-content: flex-end;
-    flex-wrap: wrap;
+  }
+  .header-utility-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
   }
   .event-banner-inner {
     flex-direction: column;
     align-items: flex-start;
-    gap: 14px;
+    gap: 12px;
   }
 }
 
