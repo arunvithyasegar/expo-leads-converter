@@ -1,0 +1,23 @@
+{
+  "recordingId": "REC-2026-40993",
+  "leadId": "LEAD-TEST-02",
+  "whishperJobId": "",
+  "status": "completed",
+  "language": "auto",
+  "createdAt": "2026-10-24T15:54:00.992869",
+  "completedAt": "2026-10-24T15:54:00.992869",
+  "fullText": "Test audio dialogue",
+  "segments": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "end": 5.0,
+      "text": "Test audio dialogue",
+      "speaker": "Staff"
+    }
+  ],
+  "rawResponseRelativePath": "",
+  "editedText": "",
+  "editedAt": "",
+  "errorMessage": ""
+}

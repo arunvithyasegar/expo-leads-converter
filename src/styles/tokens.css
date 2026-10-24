@@ -1,0 +1,28 @@
+/**
+ * Veloce Transient - Design Tokens (CSS Variables)
+ * Reusable enterprise tokens for color, typography, spacing, shadows, and radii.
+ */
+:root {
+  --color-primary-navy: #0B132B;
+  --color-primary-dark: #0F1E36;
+  --color-accent-blue: #1E4BD6;
+  --color-accent-blue-hover: #1639B0;
+  --color-accent-cyan: #0EA5E9;
+  --color-accent-emerald: #10B981;
+  --color-text-main: #0F172A;
+  --color-text-secondary: #475569;
+  --color-text-muted: #64748B;
+  --color-bg-white: #FFFFFF;
+  --color-bg-subtle: #F8FAFC;
+  --color-bg-secondary: #F1F5F9;
+  --color-border-light: #E2E8F0;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.07);
+  --shadow-lg: 0 10px 25px -3px rgba(15, 23, 42, 0.08);
+  --shadow-xl: 0 20px 35px -5px rgba(15, 23, 42, 0.12);
+}

@@ -1,0 +1,23 @@
+{
+  "recordingId": "REC-2026-42779",
+  "leadId": "LEAD-TEST-02",
+  "whishperJobId": "",
+  "status": "completed",
+  "language": "auto",
+  "createdAt": "2026-10-24T15:47:22.775709",
+  "completedAt": "2026-10-24T15:47:22.775709",
+  "fullText": "Test",
+  "segments": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "end": 5.0,
+      "text": "Test",
+      "speaker": "Staff"
+    }
+  ],
+  "rawResponseRelativePath": "",
+  "editedText": "",
+  "editedAt": "",
+  "errorMessage": ""
+}

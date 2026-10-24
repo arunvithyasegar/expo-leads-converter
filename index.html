@@ -1,0 +1,2435 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Anna Incubator · ETM 2026 Lead Conversion CRM</title>
+  <meta name="description" content="Official Lead Conversion CRM for Anna Incubator at the 29th Energy Technology & Innovation Meet (ETM 2026), Goa.">
+
+  <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Bundled SheetJS for offline Excel/CSV handling -->
+  <script src="vendor/xlsx.full.min.js"></script>
+
+  <!-- Bespoke Design System -->
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <div class="app-shell">
+
+    <!-- Top Sticky Header & Navigation -->
+    <header class="header-top">
+      <div class="header-container">
+        <!-- Brand Info -->
+        <a href="#dashboard" class="brand-section" id="brandLogoLink">
+          <div class="brand-mark">A</div>
+          <div class="brand-info">
+            <div class="brand-title">
+              Anna Incubator
+              <span class="event-tag">ETM 2026 · Goa</span>
+            </div>
+            <div class="brand-sub">Energy Technology & Innovation Meet · Lead Conversion CRM</div>
+          </div>
+        </a>
+
+        <!-- Main Navigation Tabs -->
+        <nav class="nav-tabs" aria-label="Main Navigation">
+          <button class="nav-tab-btn active" data-screen="dashboard">
+            <span>📊</span> Dashboard
+          </button>
+          <button class="nav-tab-btn" data-screen="leads">
+            <span>👥</span> Lead Directory
+            <span class="nav-badge" id="navTotalLeadsBadge">0</span>
+          </button>
+          <button class="nav-tab-btn" data-screen="tasks">
+            <span>⏰</span> Follow-ups
+            <span class="nav-badge alert" id="navOverdueBadge" style="display:none;">0</span>
+          </button>
+          <button class="nav-tab-btn" data-screen="recordings">
+            <span>🎙️</span> Recordings
+            <span class="nav-badge" id="navTotalRecordingsBadge">0</span>
+          </button>
+          <button class="nav-tab-btn" data-screen="sync">
+            <span>📁</span> Excel & Sync
+          </button>
+        </nav>
+
+        <!-- Header Actions -->
+        <div class="header-actions">
+          <!-- IRCTC Live Running Clock & 5-Minute Alarm Chime Widget -->
+          <div class="irctc-clock-alarm-wrap" id="irctcClockAlarmWrap">
+            <div class="irctc-header-clock" id="irctcHeaderClock" title="Official Live Indian Standard Time (IST) · Synced with 29th ETM 2026 Grand Hyatt Goa">
+              <span class="irctc-live-dot" aria-hidden="true"></span>
+              <span class="irctc-clock-date" id="irctcClockDate">24-Oct-2026</span>
+              <span class="irctc-clock-divider">|</span>
+              <span class="irctc-clock-time" id="irctcClockTime">13:57:55</span>
+              <span class="irctc-clock-tz">IST</span>
+            </div>
+
+            <!-- 5-Minute Beep Alarm Toggle Button -->
+            <button class="five-min-alarm-btn" id="btnFiveMinAlarm" type="button" aria-pressed="false" title="5-Minute Desk Alarm: Plays an audible beep chime every 5 minutes during attendee meetings. Click to turn ON / OFF whenever needed." onclick="CRM_UI.toggleFiveMinAlarm()">
+              <span class="alarm-bell-icon" id="alarmBellIcon">🔔</span>
+              <span class="alarm-status-text" id="fiveMinAlarmText">5m Beep: Off</span>
+              <span class="alarm-countdown-badge" id="fiveMinAlarmCountdown" style="display:none;">05:00</span>
+            </button>
+
+            <!-- Quick Sound Test Button -->
+            <button class="alarm-test-btn" id="btnTestAlarmSound" type="button" title="Test 5-minute beep alarm chime right now" onclick="CRM_UI.testAlarmBeep(event)">
+              <span>🔊</span> Test
+            </button>
+          </div>
+
+          <div class="whishper-status-pill offline" id="headerWhishperIndicator" title="Local Whishper Transcription Engine Status (127.0.0.1:8082)">
+            <div class="status-dot dot-yellow" id="whishperDot"></div>
+            <span id="whishperText">Whishper</span>
+          </div>
+          <div class="pg-status-pill offline" id="headerPgIndicator" title="PostgreSQL / pgAdmin 4 Live Database Status (localhost:5432) · Click to configure" onclick="CRM_UI.openPostgresSettingsModal()">
+            <div class="status-dot dot-yellow" id="headerPgDot"></div>
+            <span id="headerPgText">pgAdmin: Connect</span>
+          </div>
+          <div class="sync-status-indicator" id="headerSyncIndicator" title="Click to view Excel & sync status" onclick="window.location.hash='sync'">
+            <div class="status-dot" id="headerSyncDot"></div>
+            <span id="headerSyncText">Sync</span>
+          </div>
+
+          <button class="btn btn-outline-teal btn-sm" id="btnHeaderTranscribeAudio" title="Record in-person conversation & auto-transcribe directly to attendee logs">
+            <span>🎙️</span> Record
+          </button>
+
+          <!-- Consolidated Enterprise Tools & Exports Dropdown -->
+          <div class="header-tools-dropdown-wrap" id="headerToolsDropdownWrap">
+            <button class="btn btn-outline-teal btn-sm" id="btnHeaderToolsDropdown" type="button" aria-haspopup="true" aria-expanded="false" title="Quick Tools, Master Database & Platform Exports">
+              <span>⚡</span> Tools ▾
+            </button>
+            <div class="header-tools-dropdown-menu" id="headerToolsDropdownMenu" role="menu">
+              <button class="dropdown-item-btn" id="btnExportExcelTop" type="button">
+                <span>📥</span> Export Lead Directory (XLSX)
+              </button>
+              <button class="dropdown-item-btn" id="btnHeaderDownloadExcelDb" type="button" title="Download Master Excel Database with Transcripts (data/etm_database.xlsx)">
+                <span>📊</span> Download Master Excel DB
+              </button>
+              <a href="/business-travel-solutions" class="dropdown-item-btn" id="btnHeaderB2BSaaS" title="Open Cvent-Inspired Veloce Transient B2B Platform">
+                <span>🏢</span> B2B SaaS Platform (Veloce)
+              </a>
+              <div class="dropdown-item-divider"></div>
+              <button class="dropdown-item-btn" id="btnHeaderShortcuts" type="button" onclick="CRM_UI.openShortcutsModal()">
+                <span>⌨️</span> Keyboard Shortcuts <kbd class="kbd-pill-light">?</kbd>
+              </button>
+            </div>
+          </div>
+
+          <button class="btn btn-primary btn-sm" id="ctaAddNewLead" title="Add Attendee (Alt+A or N)">
+            <span>+</span> Add Attendee <kbd class="kbd-pill">Alt+A</kbd>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Event Hero Context Bar -->
+    <section class="event-banner">
+      <div class="event-banner-inner">
+        <div class="event-banner-content">
+          <h2>
+            <span>⚡</span> 29th Energy Technology & Innovation Meet (ETM 2026)
+          </h2>
+          <p>
+            Grand Hyatt Goa · 27–29 October 2026 · Energy Transition, Refining & Industrial Excellence, Future Fuels & Biotechnology, Research-to-Commercialisation, Industry-Academia Collaboration.
+          </p>
+        </div>
+        <div class="event-banner-tags">
+          <!-- IRCTC Live Venue Clock Tag -->
+          <div class="banner-tag irctc-banner-tag" id="irctcBannerClock" title="Official Live Indian Standard Time (IST) · ETM 2026 Grand Hyatt Goa">
+            <span class="irctc-live-dot" style="width:6px; height:6px;"></span>
+            <span id="irctcBannerDate">24-Oct-2026</span>
+            <span style="opacity:0.4; margin:0 3px;">|</span>
+            <span id="irctcBannerTime" class="irctc-mono-time">13:57:55</span>
+            <span class="badge badge-teal" style="font-size:9px; padding:1px 5px; margin-left:3px; font-weight:800;">LIVE IST</span>
+          </div>
+          <span class="banner-tag">Stall A-14 & DeepTech Lounge</span>
+          <span class="banner-tag">Goa, India</span>
+          <button class="banner-tag" id="openPrivacyNoticeBtn" style="cursor:pointer; background:rgba(255,255,255,0.22);">
+            🛡️ Privacy Policy
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Dynamic Screen Container -->
+    <main class="main-container">
+
+      <!-- =====================================================================
+           SCREEN 1: DASHBOARD
+           ===================================================================== -->
+      <section class="crm-screen active" id="screen-dashboard">
+        <!-- 8 Metric Summary Cards (ETM 2026 Executive Overview) -->
+        <div class="metrics-grid">
+          <!-- 1. Total Attendees -->
+          <div class="metric-card" onclick="CRM_UI.switchScreen('leads')">
+            <div class="metric-content">
+              <span class="metric-label">Total Attendees</span>
+              <span class="metric-value" id="metricTotalLeads">0</span>
+              <span class="metric-sub">Captured at ETM 2026</span>
+            </div>
+            <div class="metric-icon-wrap">👥</div>
+          </div>
+
+          <!-- 2. Interested in Incubation -->
+          <div class="metric-card incubation-card" onclick="CRM_UI.filterByIncubation('any')">
+            <div class="metric-content">
+              <span class="metric-label">Interested in Incubation</span>
+              <span class="metric-value" id="metricIncubationInterested" style="color:var(--teal-700);">0</span>
+              <span class="metric-sub" id="metricIncubationSub">Seeking cohort admission</span>
+            </div>
+            <div class="metric-icon-wrap" style="color:var(--teal-700);">🚀</div>
+          </div>
+
+          <!-- 3. Startup & Project Ideas -->
+          <div class="metric-card idea-card" onclick="CRM_UI.scrollToIdeaSpotlight()">
+            <div class="metric-content">
+              <span class="metric-label">Innovation Ideas</span>
+              <span class="metric-value" id="metricTotalIdeas" style="color:var(--gold-600);">0</span>
+              <span class="metric-sub">Novel DeepTech pitches</span>
+            </div>
+            <div class="metric-icon-wrap" style="color:var(--gold-600);">💡</div>
+          </div>
+
+          <!-- 4. Energy & DeepTech Sectors -->
+          <div class="metric-card sectors-card" onclick="CRM_UI.switchScreen('leads')">
+            <div class="metric-content">
+              <span class="metric-label">Active Sectors</span>
+              <span class="metric-value" id="metricTotalSectors" style="color:#6366f1;">0</span>
+              <span class="metric-sub">Hydrogen, CCUS, Biofuels...</span>
+            </div>
+            <div class="metric-icon-wrap" style="color:#6366f1;">⚡</div>
+          </div>
+
+          <!-- 5. Meetings Scheduled -->
+          <div class="metric-card" onclick="CRM_UI.filterByStage('Meeting scheduled')">
+            <div class="metric-content">
+              <span class="metric-label">Meetings Scheduled</span>
+              <span class="metric-value" id="metricMeetings">0</span>
+              <span class="metric-sub">Confirmed briefings</span>
+            </div>
+            <div class="metric-icon-wrap">🤝</div>
+          </div>
+
+          <!-- 6. Active Pipeline Opportunities -->
+          <div class="metric-card warning-card" onclick="CRM_UI.switchScreen('leads')">
+            <div class="metric-content">
+              <span class="metric-label">Active Opportunities</span>
+              <span class="metric-value" id="metricOpportunities">0</span>
+              <span class="metric-sub">Qualified pipeline leads</span>
+            </div>
+            <div class="metric-icon-wrap">🔥</div>
+          </div>
+
+          <!-- 7. Total Conversion & Rate (Enhanced) -->
+          <div class="metric-card success-card" onclick="CRM_UI.filterByStage('Converted')" title="Click to view all Converted &amp; Incubated Leads">
+            <div class="metric-content">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:6px;">
+                <span class="metric-label">Total Conversion</span>
+                <span class="badge badge-emerald" id="metricConversionRateBadge" style="font-size:10.5px; font-weight:800; padding:1px 6px;">0.0%</span>
+              </div>
+              <div style="display:flex; align-items:baseline; gap:8px;">
+                <span class="metric-value" id="metricConverted">0</span>
+                <span id="metricConvertedValueText" style="font-size:13px; font-weight:700; color:var(--emerald-600);">₹0.0L</span>
+              </div>
+              <span class="metric-sub" id="metricConversionSub">Incubated / MoUs signed</span>
+            </div>
+            <div class="metric-icon-wrap">🏆</div>
+          </div>
+
+          <!-- 8. Follow-ups Due Today -->
+          <div class="metric-card alert-card" onclick="CRM_UI.switchScreen('tasks')">
+            <div class="metric-content">
+              <span class="metric-label">Follow-ups Due Today</span>
+              <span class="metric-value" id="metricDueToday">0</span>
+              <span class="metric-sub">Actions scheduled today</span>
+            </div>
+            <div class="metric-icon-wrap">📅</div>
+          </div>
+        </div>
+
+        <!-- =====================================================================
+             EXECUTIVE COMMAND HUB: TOTAL CONVERSION & PIPELINE YIELD INTELLIGENCE
+             ===================================================================== -->
+        <div class="conversion-command-hub" id="conversionCommandHub">
+          <div class="card-panel conversion-summary-panel">
+            <div class="card-panel-head">
+              <div>
+                <h3 class="card-panel-title">
+                  <span>🎯</span> Total Lead Conversion &amp; Yield Intelligence
+                </h3>
+                <div class="card-panel-sub">Real-time attendee qualification, meeting-to-MoU conversion yield, and grant/pilot deal velocity.</div>
+              </div>
+              <div class="flex-center gap-8">
+                <span class="badge badge-emerald" id="conversionStatusBadge">Active Performance</span>
+                <button class="btn btn-sm btn-outline-teal" onclick="CRM_UI.filterByStage('Converted')">View Converted (MoUs)</button>
+              </div>
+            </div>
+
+            <div class="conversion-metrics-split">
+              <!-- KPI 1: Total Conversion Rate -->
+              <div class="conv-kpi-box" onclick="CRM_UI.filterByStage('Converted')" style="cursor:pointer;" title="Click to filter Converted leads">
+                <div class="conv-kpi-label">Total Lead Conversion Rate</div>
+                <div class="conv-kpi-val" id="convTotalRateVal">0.0%</div>
+                <div class="conv-kpi-desc" id="convTotalRateDesc">0 of 0 Attendees converted</div>
+                <div class="conv-progress-track">
+                  <div class="conv-progress-fill" id="convTotalRateProgress" style="width: 0%;"></div>
+                </div>
+              </div>
+
+              <!-- KPI 2: Opportunity Win Rate -->
+              <div class="conv-kpi-box" onclick="CRM_UI.switchScreen('leads')" style="cursor:pointer;" title="Click to view Opportunity Pipeline">
+                <div class="conv-kpi-label">Opportunity Win Rate</div>
+                <div class="conv-kpi-val" id="convWinRateVal" style="color:var(--teal-700);">0.0%</div>
+                <div class="conv-kpi-desc" id="convWinRateDesc">Qualified to Converted ratio</div>
+                <div class="conv-progress-track">
+                  <div class="conv-progress-fill" id="convWinRateProgress" style="width: 0%; background:var(--teal-600);"></div>
+                </div>
+              </div>
+
+              <!-- KPI 3: Total Converted Value -->
+              <div class="conv-kpi-box" onclick="CRM_UI.filterByStage('Converted')" style="cursor:pointer;" title="Click to view Converted Value">
+                <div class="conv-kpi-label">Converted Deal / MoU Value</div>
+                <div class="conv-kpi-val" id="convTotalValueVal" style="color:var(--emerald-600);">₹0.0L</div>
+                <div class="conv-kpi-desc" id="convTotalValueDesc">of ₹0.0L Total Pipeline</div>
+                <div class="conv-progress-track">
+                  <div class="conv-progress-fill" id="convTotalValueProgress" style="width: 0%; background:var(--emerald-600);"></div>
+                </div>
+              </div>
+
+              <!-- KPI 4: Total Event Logs Captured -->
+              <div class="conv-kpi-box" onclick="CRM_UI.scrollToEventLogs()" style="cursor:pointer;" title="Click to view all Event Logs">
+                <div class="conv-kpi-label">Event Logs &amp; Transcripts</div>
+                <div class="conv-kpi-val" id="convTotalLogsVal" style="color:var(--indigo-600);">0</div>
+                <div class="conv-kpi-desc" id="convTotalLogsDesc">Interactions, Transcripts &amp; Briefings</div>
+                <div class="conv-badge-row" id="convLogsBreakdown">
+                  <span class="badge badge-slate" id="convLogsMeetingBadge" style="font-size:10px;">0 Meetings</span>
+                  <span class="badge badge-indigo" id="convLogsTranscriptBadge" style="font-size:10px;">0 Transcripts</span>
+                  <span class="badge badge-teal" id="convLogsOnlineBadge" style="font-size:10px;">0 Online</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Milestone Conversion Funnel Ribbon -->
+            <div class="conversion-funnel-ribbon-wrap">
+              <div class="conversion-funnel-title">
+                <span><span>📈</span> Milestone Conversion Funnel &amp; Stage Flow</span>
+                <span class="text-muted" style="font-size:11px; text-transform:none; font-weight:500;">Click any stage to filter lead directory</span>
+              </div>
+              <div class="conversion-funnel-ribbon" id="conversionFunnelRibbon">
+                <!-- Rendered dynamically by CRM_UI.renderDashboard() -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NEW ANALYTICS GRID: Incubation Readiness & Energy Sectors Representation -->
+        <div class="analytics-grid-2">
+          <!-- Left: Incubation Process Readiness & Intent -->
+          <div class="card-panel">
+            <div class="card-panel-head">
+              <div>
+                <h3 class="card-panel-title"><span>🚀</span> Incubation Process Interest &amp; Readiness</h3>
+                <div class="card-panel-sub">Attendee incubation requirements and cohort readiness breakdown.</div>
+              </div>
+              <button class="btn btn-sm btn-outline-teal" onclick="CRM_UI.filterByIncubation('any')">View Candidates</button>
+            </div>
+            <div class="incubation-breakdown-list" id="dashboardIncubationBars">
+              <!-- Rendered dynamically by CRM_UI.renderDashboard() -->
+            </div>
+          </div>
+
+          <!-- Right: Core Energy & DeepTech Sectors Breakdown -->
+          <div class="card-panel">
+            <div class="card-panel-head">
+              <div>
+                <h3 class="card-panel-title"><span>⚡</span> ETM 2026 DeepTech &amp; Energy Sectors</h3>
+                <div class="card-panel-sub">Representation across CleanTech, Hydrogen, Biofuels &amp; Storage.</div>
+              </div>
+              <button class="btn btn-sm" onclick="CRM_UI.switchScreen('leads')">All Sectors</button>
+            </div>
+            <div class="sector-breakdown-list" id="dashboardSectorBars">
+              <!-- Rendered dynamically by CRM_UI.renderDashboard() -->
+            </div>
+          </div>
+        </div>
+
+        <!-- NEW: ETM 2026 Startup & Innovation Idea Showcase -->
+        <div class="card-panel" id="sectionIdeaSpotlight" style="margin-bottom: 24px;">
+          <div class="card-panel-head">
+            <div>
+              <h3 class="card-panel-title"><span>💡</span> ETM 2026 Startup &amp; Innovation Idea Showcase</h3>
+              <div class="card-panel-sub">Curated technology ideas, proprietary capabilities, and incubation pitches from attendees.</div>
+            </div>
+            <div class="flex-center gap-8">
+              <span id="ideaSpotlightCount" class="badge badge-teal">0 Ideas Registered</span>
+              <button class="btn btn-sm btn-primary" onclick="CRM_UI.openLeadForm('create')">+ Register New Idea</button>
+            </div>
+          </div>
+          <div class="idea-spotlight-grid" id="dashboardIdeaSpotlight">
+            <!-- Rendered dynamically by CRM_UI.renderDashboard() -->
+          </div>
+        </div>
+
+        <!-- Dashboard 2-Column Split: Pipeline Funnel & Priority Queue -->
+        <div class="dashboard-grid">
+          <!-- Left: Pipeline Summary by Stage -->
+          <div class="card-panel">
+            <div class="card-panel-head">
+              <div>
+                <h3 class="card-panel-title"><span>📈</span> Lead Conversion Pipeline</h3>
+                <div class="card-panel-sub">Click any stage bar to filter the leads directory.</div>
+              </div>
+              <button class="btn btn-sm btn-outline-teal" id="dashCtaAddLead">+ Add Lead</button>
+            </div>
+            <div class="pipeline-breakdown" id="dashboardPipelineBars">
+              <!-- Populated dynamically via CRM_UI.renderDashboard() -->
+            </div>
+          </div>
+
+          <!-- Right: Follow-up Queue -->
+          <div class="card-panel">
+            <div class="card-panel-head">
+              <div>
+                <h3 class="card-panel-title"><span>⚡</span> Priority Follow-up Queue</h3>
+                <div class="card-panel-sub">Sorted by due date and priority level.</div>
+              </div>
+              <button class="btn btn-sm" onclick="CRM_UI.switchScreen('tasks')">View all</button>
+            </div>
+            <div id="dashboardFollowUpQueue">
+              <!-- Populated dynamically via CRM_UI.renderDashboard() -->
+            </div>
+          </div>
+        </div>
+
+        <!-- =====================================================================
+             NEW: HIGH-IMPACT ATTENDEE LEADS & CONVERSION TARGETS
+             ===================================================================== -->
+        <div class="card-panel" id="sectionAttendeeEngagement" style="margin-bottom: 24px;">
+          <div class="card-panel-head">
+            <div>
+              <h3 class="card-panel-title"><span>👥</span> High-Impact Attendee Leads &amp; Conversion Targets</h3>
+              <div class="card-panel-sub">Attendees ranked by interaction volume, estimated grant/deal value, and conversion velocity.</div>
+            </div>
+            <div class="flex-center gap-8">
+              <span class="badge badge-teal" id="dashboardLeadsEngagedCount">0 Priority Leads</span>
+              <button class="btn btn-sm btn-outline-teal" onclick="CRM_UI.switchScreen('leads')">View Full Directory →</button>
+            </div>
+          </div>
+          <div class="dashboard-leads-grid" id="dashboardEngagedLeadsGrid">
+            <!-- Rendered dynamically by CRM_UI.renderDashboard() -->
+          </div>
+        </div>
+
+        <!-- =====================================================================
+             UPGRADED: REAL-TIME EVENT & INTERACTION LOGS COMMAND CENTER
+             ===================================================================== -->
+        <div class="card-panel" id="sectionEventLogsHub">
+          <div class="card-panel-head">
+            <div>
+              <h3 class="card-panel-title"><span>📝</span> Real-Time Event &amp; Interaction Logs Command Center</h3>
+              <div class="card-panel-sub">Live audit trail of attendee conversations, audio transcriptions, meetings, and conversion milestones.</div>
+            </div>
+            <div class="flex-center gap-8">
+              <span class="badge badge-indigo" id="dashboardEventLogsCount">0 Event Logs</span>
+              <button class="btn btn-sm btn-primary" onclick="CRM_UI.openLogActivityModal()">+ Log New Event</button>
+            </div>
+          </div>
+
+          <!-- Interactive Filter Tabs & Search for Event Logs -->
+          <div class="activity-filter-bar">
+            <div class="activity-filter-tabs" id="activityFilterTabs">
+              <button class="activity-tab-btn active" data-act-filter="all" onclick="CRM_UI.setActivityFilter('all')">All Logs (<span id="countActAll">0</span>)</button>
+              <button class="activity-tab-btn" data-act-filter="transcripts" onclick="CRM_UI.setActivityFilter('transcripts')">🎙️ Audio &amp; Transcripts (<span id="countActTranscripts">0</span>)</button>
+              <button class="activity-tab-btn" data-act-filter="meetings" onclick="CRM_UI.setActivityFilter('meetings')">🤝 In-Person Meetings (<span id="countActMeetings">0</span>)</button>
+              <button class="activity-tab-btn" data-act-filter="conversions" onclick="CRM_UI.setActivityFilter('conversions')">🏆 Stage &amp; Conversions (<span id="countActConversions">0</span>)</button>
+              <button class="activity-tab-btn" data-act-filter="online" onclick="CRM_UI.setActivityFilter('online')">🌐 Online Inquiries (<span id="countActOnline">0</span>)</button>
+            </div>
+            <div class="activity-filter-search">
+              <input type="text" id="dashboardActivitySearch" class="form-input form-input-sm" placeholder="Search logs, transcripts, attendees..." style="max-width:260px; padding:4px 10px; font-size:12px;">
+            </div>
+          </div>
+
+          <div class="activity-stream" id="dashboardRecentActivity">
+            <!-- Populated dynamically via CRM_UI.renderDashboard() -->
+          </div>
+          
+          <div class="activity-load-more" id="activityLoadMoreWrap" style="text-align:center; padding:12px 0 4px; border-top:1px solid var(--border-light); margin-top:12px;">
+            <button class="btn btn-sm btn-outline-teal" id="btnToggleAllActivities" onclick="CRM_UI.toggleAllActivities()">Show All Event Logs</button>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- =====================================================================
+           SCREEN 2: LEAD DIRECTORY TABLE
+           ===================================================================== -->
+      <section class="crm-screen" id="screen-leads">
+        <!-- Toolbar & Search -->
+        <div class="toolbar-bar">
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="leadsSearchInput" placeholder="Search attendee name, email, phone, organisation, notes, owner...">
+          </div>
+          <div class="flex-center gap-8">
+            <span id="tableResultsCount" class="text-muted" style="font-size:12px;">Showing 0 leads</span>
+            <button class="btn btn-sm btn-outline-teal" onclick="CRM_UI.openLeadForm('create')">+ Add Attendee</button>
+          </div>
+        </div>
+
+        <!-- Quick Filter Chips (Saved Views) -->
+        <div class="filter-chips-bar">
+          <button class="filter-chip active" data-preset="all">All Contacts</button>
+          <button class="filter-chip" data-preset="incubation">🚀 Seeking Incubation</button>
+          <button class="filter-chip" data-preset="overdue">⚠️ Overdue Follow-ups</button>
+          <button class="filter-chip" data-preset="today">📅 Due Today</button>
+          <button class="filter-chip" data-preset="opportunities">🔥 High-Priority Opportunities</button>
+          <button class="filter-chip" data-preset="missing-consent">🛡️ Needs Consent Review</button>
+          <button class="filter-chip" data-preset="startups">🚀 Startups</button>
+          <button class="filter-chip" data-preset="industry">🏭 Industry &amp; Energy Companies</button>
+          <button class="filter-chip" data-preset="converted">🏆 Converted</button>
+        </div>
+
+        <!-- Advanced Filters Panel -->
+        <div class="advanced-filters-panel">
+          <div class="form-field">
+            <label class="form-label">Incubation Interest</label>
+            <select class="form-select" id="filterIncubationInterest"></select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Sector</label>
+            <select class="form-select" id="filterSector"></select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Stage</label>
+            <select class="form-select" id="filterStage"></select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Lead Owner</label>
+            <select class="form-select" id="filterOwner"></select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Organisation Type</label>
+            <select class="form-select" id="filterOrgType"></select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Consent Status</label>
+            <select class="form-select" id="filterConsent"></select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Priority</label>
+            <div class="flex-center gap-8">
+              <select class="form-select" id="filterPriority" style="flex:1;"></select>
+              <button class="btn btn-sm" id="resetFiltersBtn" title="Reset all filters">Reset</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Batch Actions Bar -->
+        <div class="batch-actions-bar" id="batchActionBar" style="display:none;">
+          <div class="flex-center gap-12">
+            <span id="batchSelectedCount" style="font-weight:700;">0 selected</span>
+            <button class="btn btn-sm btn-outline-teal" id="batchExportBtn">Export Selected to Excel</button>
+          </div>
+          <button class="btn btn-sm" id="batchClearBtn" style="background:transparent; border-color:rgba(255,255,255,0.4); color:#fff;">Clear Selection</button>
+        </div>
+
+        <!-- Responsive Leads Table -->
+        <div class="table-responsive">
+          <table class="data-table" id="leadsDirectoryTable">
+            <thead>
+              <tr>
+                <th style="width: 38px; text-align:center;">
+                  <input type="checkbox" id="batchSelectAllCheckbox" title="Select all visible leads">
+                </th>
+                <th>Attendee &amp; Contact</th>
+                <th>Organisation</th>
+                <th>Innovation Idea &amp; Incubation</th>
+                <th>DeepTech Sector</th>
+                <th>Stage</th>
+                <th>Owner</th>
+                <th>Next Follow-up</th>
+                <th>Consent</th>
+                <th style="white-space: nowrap;">⏱️ Time Spent</th>
+                <th>Last Updated</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="leadsTableBody">
+              <!-- Populated dynamically via CRM_UI.renderLeadsTable() -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+
+      <!-- =====================================================================
+           SCREEN 3: LEAD PROFILE
+           ===================================================================== -->
+      <section class="crm-screen" id="screen-profile">
+        <div class="profile-shell">
+          <!-- Back Breadcrumb & Header Card -->
+          <div class="profile-header-card">
+            <div style="margin-bottom: 12px;">
+              <a href="#leads" style="text-decoration:none; color:var(--teal-700); font-weight:600; font-size:12px;">
+                ← Back to Lead Directory
+              </a>
+            </div>
+
+            <div class="profile-title-bar">
+              <div>
+                <h1 class="profile-main-title">
+                  <span id="profileLeadName">Attendee Name</span>
+                  <span id="profilePriorityPill" class="badge">Warm</span>
+                  <span id="profileStagePill" class="badge">New</span>
+                </h1>
+                <div class="profile-company-sub" id="profileLeadOrg">Company · Role</div>
+                <div class="text-muted" style="font-size:11px; margin-top:2px;">Lead ID: <strong id="profileLeadId">—</strong></div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="flex-center gap-8" style="flex-wrap: wrap;">
+                <button class="btn btn-record-direct" id="profileHeaderRecordBtn" onclick="CRM_UI.openRecordModal(CRM_UI.activeLeadId)">
+                  <span>🎙️</span> Record Conversation
+                </button>
+                <button class="btn btn-outline-teal" id="profileDownloadCsvBtn" onclick="CRM_UI.downloadAttendeeCsv(CRM_UI.activeLeadId)">
+                  <span>📥</span> Attendee CSV
+                </button>
+                <button class="btn btn-primary" id="profileLogActivityBtn">
+                  <span>📝</span> Log Interaction
+                </button>
+                <button class="btn" id="profileEditBtn">
+                  <span>✏️</span> Edit Lead
+                </button>
+                <button class="btn btn-danger" id="profileDeleteBtn">
+                  <span>🗑️</span> Delete / Archive
+                </button>
+              </div>
+            </div>
+
+            <!-- Attendee In-Person Consultation Time Tracker -->
+            <div class="attendee-time-tracker-card" id="attendeeTimeTrackerCard">
+              <div class="time-tracker-left">
+                <div class="time-tracker-status-icon">⏱️</div>
+                <div>
+                  <div class="time-tracker-label">Total Time Spent with Attendee</div>
+                  <div class="time-tracker-main-val">
+                    <span id="profileTotalTimeSpent">0m 00s</span>
+                    <span class="badge badge-teal" id="profileTimeEngagementBadge">Consultation Active</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Real-Time In-Person Active Session Stopwatch -->
+              <div class="time-tracker-right">
+                <div class="session-timer-box">
+                  <div class="session-timer-label">
+                    <span class="session-timer-pulse" id="sessionTimerPulse"></span>
+                    <span>Current Active Session</span>
+                  </div>
+                  <div class="session-timer-digits" id="profileSessionTimeDigits">00:00</div>
+                </div>
+                <div class="session-timer-actions">
+                  <button class="btn btn-sm btn-outline-teal" id="btnPauseResumeSessionTimer" type="button" title="Pause or Resume Active Session Time Counter" onclick="CRM_UI.togglePauseResumeSessionTimer()">
+                    <span id="btnPauseResumeIcon">⏸️</span> <span id="btnPauseResumeText">Pause</span>
+                  </button>
+                  <button class="btn btn-sm" id="btnAddManualTime5" type="button" title="Add 5 minutes of discussion" onclick="CRM_UI.addAttendeeTime(300)">
+                    +5m
+                  </button>
+                  <button class="btn btn-sm" id="btnAddManualTime15" type="button" title="Add 15 minutes of discussion" onclick="CRM_UI.addAttendeeTime(900)">
+                    +15m
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Visual Pipeline Progression Stepper -->
+            <div style="margin-top: 14px;">
+              <div style="font-size:11px; font-weight:700; color:var(--ink-500); text-transform:uppercase; letter-spacing:0.5px;">
+                Conversion Pipeline Progression
+              </div>
+              <div class="pipeline-stepper" id="profilePipelineStepper">
+                <!-- Populated via CRM_UI.renderPipelineStepper() -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Prominent Consent Alert Banner -->
+          <div id="profileConsentBanner"></div>
+
+          <!-- Profile 2-Column Overview -->
+          <div class="profile-columns">
+            <!-- Left Column: Details -->
+            <div>
+              <!-- Contact Card -->
+              <div class="info-group-card">
+                <h4 class="info-group-title">Contact & Communication Preferences</h4>
+                <div class="info-key-val-grid" id="profileContactGrid"></div>
+              </div>
+
+              <!-- Incubation Process & Startup Idea Card -->
+              <div class="info-group-card" style="border-left: 4px solid var(--teal-600); background: linear-gradient(to bottom, #f0fdfa, #ffffff);">
+                <div class="flex-center justify-between" style="margin-bottom: 12px;">
+                  <h4 class="info-group-title" style="margin-bottom:0; color:var(--teal-950);">
+                    <span>🚀 Incubation Process &amp; Startup Idea</span>
+                  </h4>
+                  <span class="badge badge-teal" id="profileIncubationBadge" style="font-size:11px;">Seeking Incubation</span>
+                </div>
+                <div class="info-key-val-grid" id="profileIncubationGrid"></div>
+                <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--teal-100);">
+                  <strong style="font-size:12px; color:var(--ink-600);">One-Line Pitch / Technology Summary:</strong>
+                  <div style="font-size:13px; margin-top:4px; font-style:italic; color:var(--teal-950); line-height:1.5;" id="profileIdeaPitch">—</div>
+                </div>
+              </div>
+
+              <!-- Organisation Card -->
+              <div class="info-group-card">
+                <h4 class="info-group-title">Organisation & Sectors</h4>
+                <div class="info-key-val-grid" id="profileOrgGrid"></div>
+              </div>
+
+              <!-- Event Context & Interests -->
+              <div class="info-group-card">
+                <h4 class="info-group-title">ETM 2026 Context & Collaboration</h4>
+                <div class="info-key-val-grid" id="profileEventGrid"></div>
+              </div>
+
+              <!-- Problem / Need & Capability Offered -->
+              <div class="info-group-card">
+                <h4 class="info-group-title">Needs, Capabilities & Notes</h4>
+                <div style="margin-bottom: 12px;">
+                  <strong style="font-size:12px; color:var(--ink-600);">Identified Problem or Need:</strong>
+                  <div style="font-size:13px; margin-top:4px;" id="profileProblemNeed">—</div>
+                </div>
+                <div style="margin-bottom: 12px;">
+                  <strong style="font-size:12px; color:var(--ink-600);">Solution / Capability Offered:</strong>
+                  <div style="font-size:13px; margin-top:4px;" id="profileCapability">—</div>
+                </div>
+                <div>
+                  <strong style="font-size:12px; color:var(--ink-600);">Event Discussion Notes:</strong>
+                  <div style="font-size:13px; margin-top:4px; white-space:pre-wrap;" id="profileNotes">—</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column: Scheduled Next Action, Activity Timeline & Related Contacts -->
+            <div>
+              <!-- Scheduled Next Action Card -->
+              <div class="info-group-card" style="border-left: 4px solid var(--teal-600);">
+                <h4 class="info-group-title">
+                  <span>📅 Next Scheduled Follow-up</span>
+                  <button class="btn btn-sm btn-outline-teal" onclick="CRM_UI.openQuickStageModal(CRM_UI.activeLeadId)">Update</button>
+                </h4>
+                <div style="margin-bottom: 8px;">
+                  <span class="text-muted" style="font-size:12px;">Action Item:</span>
+                  <div style="font-size:14px; font-weight:600; color:var(--teal-900);" id="profileNextActionText">—</div>
+                </div>
+                <div class="flex-center justify-between" style="font-size:12px;">
+                  <div>Due Date: <strong id="profileFollowUpDateText">—</strong></div>
+                  <div>Assigned Owner: <strong id="profileOwnerText">—</strong></div>
+                </div>
+              </div>
+
+              <!-- Activity History Timeline -->
+              <div class="info-group-card">
+                <div class="info-group-title">
+                  <span>📜 Activity History Timeline</span>
+                  <button class="btn btn-sm btn-primary" onclick="CRM_UI.openLogActivityModal(CRM_UI.activeLeadId)">+ Log</button>
+                </div>
+                <div class="activity-stream" id="profileActivityTimeline">
+                  <!-- Populated dynamically via CRM_UI.renderProfileActivityTimeline() -->
+                </div>
+              </div>
+
+              <!-- Related Organisation Contacts -->
+              <div class="info-group-card">
+                <h4 class="info-group-title">
+                  <span>🏢 Related Contacts From Same Organisation</span>
+                </h4>
+                <div id="profileRelatedContacts">
+                  <!-- Populated dynamically via CRM_UI.renderRelatedContacts() -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Conversations & Local Transcripts Panel -->
+          <div class="card-panel" style="margin-top: 24px;">
+            <div class="card-panel-head">
+              <div>
+                <h3 class="card-panel-title">
+                  <span>🎙️</span> In-Person Conversations & Local Transcripts
+                  <span class="badge" id="profileRecordingsCountBadge" style="margin-left:8px;">0</span>
+                </h3>
+                <div class="card-panel-sub">
+                  Record attendee conversations live at the stall. Audio is saved locally in <code>data/recordings/</code> and transcribed via local Whishper engine (v3.1.4).
+                </div>
+              </div>
+              <button class="btn btn-primary" id="btnRecordConversationProfile">
+                <span>🎙️</span> Record Conversation
+              </button>
+            </div>
+            <div id="profileRecordingsList">
+              <!-- Populated dynamically via CRM_UI.renderConversationsPanel() -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+
+      <!-- =====================================================================
+           SCREEN 4: ADD OR EDIT LEAD FORM
+           ===================================================================== -->
+      <!-- =====================================================================
+           SCREEN 4: ADD OR EDIT LEAD FORM (MULTI-STEP FLOW)
+           ===================================================================== -->
+      <section class="crm-screen" id="screen-lead-form">
+        <div class="form-card" style="max-width: 1220px; margin: 0 auto; width: 100%;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom: 22px; border-bottom: 1.5px solid var(--border-light); padding-bottom: 16px;">
+            <div>
+              <h2 style="margin:0; font-size:24px; font-weight:800; color:var(--teal-900);" id="leadFormTitle">Add Attendee Contact</h2>
+              <div class="text-muted" style="font-size:14px; margin-top:4px;" id="leadFormSubTitle">
+                Fast lead capture at Anna Incubator event desk. Fields marked <span style="color:var(--rose-600); font-weight:700;">*</span> are required.
+              </div>
+            </div>
+            <button class="btn btn-sm" id="leadFormCancelBtn" type="button" style="padding:8px 18px; font-size:13px;" onclick="CRM_UI.cancelLeadForm()">Cancel</button>
+          </div>
+
+          <!-- 2-Step Progress Bar -->
+          <div class="form-stepper-bar form-stepper-2step" id="leadFormStepper">
+            <div class="form-step-pill active" id="pillStep1" data-step="1" onclick="CRM_UI.setFormStep(1)">
+              <div class="step-pill-number">1</div>
+              <div class="step-pill-text">
+                <span class="step-pill-title">Page 1: Fast Attendee Intake</span>
+                <span class="step-pill-sub">Name, Phone, Email · Instant Attendee ID</span>
+              </div>
+            </div>
+            <div class="form-step-pill" id="pillStep2" data-step="2" onclick="CRM_UI.setFormStep(2)">
+              <div class="step-pill-number">2</div>
+              <div class="step-pill-text">
+                <span class="step-pill-title">Page 2: Startup Evaluation Hub</span>
+                <span class="step-pill-sub">Unified Index · Click / Drag TRL &amp; Readiness</span>
+              </div>
+            </div>
+          </div>
+
+          <form id="leadMainForm" novalidate>
+            <input type="hidden" id="formLeadId">
+
+            <!-- =============================================================
+                 PAGE 1: FAST ATTENDEE CONTACT CAPTURE (Desk conversion)
+                 ============================================================= -->
+            <div class="form-step-panel active" id="formStepPanel1">
+              <div class="fast-intake-notice-box" style="margin-bottom:18px; padding:12px 16px; background:#f0fdfa; border:1.5px solid var(--teal-300); border-radius:var(--radius-md); display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <span style="font-size:20px;">⚡</span>
+                  <div>
+                    <strong style="color:var(--teal-900); font-size:13px;">Fast Desk Lead Intake:</strong>
+                    <div style="font-size:12px; color:var(--teal-800); margin-top:2px;">
+                      <strong>Full Name</strong>, <strong>Phone</strong>, and <strong>Email</strong> are sufficient to generate an official Attendee ID (e.g. <code>LEAD-2026-XXXXX</code>). <strong>Role</strong> and <strong>Organisation</strong> are optional.
+                    </div>
+                  </div>
+                </div>
+                <span class="badge badge-teal" style="font-size:11px; font-weight:700;">Desk Capture &lt; 15s</span>
+              </div>
+
+              <!-- Primary Required Contact Fields -->
+              <div class="form-section-title" style="display:flex; align-items:center; justify-content:space-between;">
+                <span>1. Attendee Contact Details</span>
+                <span class="badge badge-slate" style="font-size:10px;">Required: Name, Phone, Email</span>
+              </div>
+              <div class="form-grid-3">
+                <div class="form-field">
+                  <label class="form-label">Full Name <span class="required-star">*</span></label>
+                  <input class="form-input" id="formFullName" required maxlength="100" placeholder="e.g. Dr. Arvind Swaminathan">
+                </div>
+                <div class="form-field">
+                  <label class="form-label">
+                    <span>Phone / WhatsApp (Permanent Contact)</span> <span class="required-star">*</span>
+                    <span class="text-muted" style="font-size:11px; font-weight:normal;">10 digits</span>
+                  </label>
+                  <input class="form-input" id="formPhone" required type="tel" maxlength="10" inputmode="numeric" pattern="[0-9]{10}" placeholder="9840123456" title="Please enter a 10-digit mobile or WhatsApp number">
+                </div>
+                <div class="form-field">
+                  <label class="form-label">Email Address <span class="required-star">*</span></label>
+                  <input class="form-input" id="formEmail" required type="email" maxlength="254" placeholder="arvind@company.com">
+                </div>
+                <div class="form-field">
+                  <label class="form-label">Job Title / Role <span class="text-muted" style="font-weight:normal; font-size:11px;">(Optional)</span></label>
+                  <input class="form-input" id="formJobTitle" maxlength="100" placeholder="e.g. Chief Technology Officer">
+                </div>
+                <div class="form-field col-span-2">
+                  <label class="form-label">Organisation Name <span class="text-muted" style="font-weight:normal; font-size:11px;">(Optional · Leave blank if independent)</span></label>
+                  <input class="form-input" id="formOrganisation" maxlength="150" placeholder="e.g. CleanFuel Technologies Pvt Ltd (Optional)">
+                </div>
+              </div>
+
+              <!-- Compact Communication Preferences -->
+              <div class="form-grid-3" style="margin-top:10px; padding:12px 14px; background:var(--bg-subtle); border:1px solid var(--border-light); border-radius:var(--radius-sm);">
+                <div class="form-field">
+                  <label class="form-label" style="font-size:11px;">Preferred Contact Channel</label>
+                  <select class="form-select" id="leadContactMethodSelect"></select>
+                </div>
+                <div class="form-field">
+                  <label class="form-label" style="font-size:11px;">Country</label>
+                  <input class="form-input" id="formCountry" value="India" maxlength="80">
+                </div>
+                <div class="form-field">
+                  <label class="form-label" style="font-size:11px;">Preferred Language</label>
+                  <input class="form-input" id="formLanguage" maxlength="50" placeholder="e.g. English, Hindi, Konkani">
+                </div>
+              </div>
+
+              <!-- Page 1 Action Buttons -->
+              <div class="step-actions-row" style="margin-top:24px;">
+                <div class="flex-center gap-8">
+                  <button type="button" class="btn btn-sm" onclick="CRM_UI.cancelLeadForm()">Cancel</button>
+                  <button type="button" class="btn btn-sm" id="leadFormResetBtn" onclick="CRM_UI.openLeadForm('create')">Clear Form</button>
+                </div>
+                <div class="flex-center gap-8" style="flex-wrap: wrap;">
+                  <button type="button" class="btn btn-outline-teal" id="btnQuickSaveStep1" onclick="CRM_UI.quickSaveLead(false, 'dashboard')" title="Save Attendee (Ctrl+Enter)">
+                    <span>⚡</span> Save Attendee <kbd class="kbd-pill-light">Ctrl+↵</kbd>
+                  </button>
+                  <button type="button" class="btn btn-record-direct" id="btnSaveAndRecordStep1" onclick="CRM_UI.quickSaveLead(true, 'dashboard')" title="Save & Record Conversation (Ctrl+Shift+Enter)">
+                    <span>🎙️</span> Save &amp; Record <kbd class="kbd-pill-light">Ctrl+⇧+↵</kbd>
+                  </button>
+                  <button type="button" class="btn btn-primary" id="btnNextToStep2" onclick="CRM_UI.nextFormStep(1)">
+                    Next: Startup Evaluation Hub (Page 2) →
+                  </button>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- =============================================================
+                 PAGE 2: STARTUP & INCUBATION EVALUATION HUB (Unified with Index)
+                 ============================================================= -->
+            <div class="form-step-panel" id="formStepPanel2">
+              
+              <!-- Sticky Interactive Index Navigation Bar -->
+              <div class="eval-index-bar" id="evalIndexNav">
+                <button type="button" class="eval-index-tab active" onclick="CRM_UI.scrollToEvalSection('evalSecOrg')">
+                  <span>🏢</span> 1. Organisation &amp; Sectors
+                </button>
+                <button type="button" class="eval-index-tab" onclick="CRM_UI.scrollToEvalSection('evalSecTracks')">
+                  <span>🌐</span> 2. Themes &amp; Tracks
+                </button>
+                <button type="button" class="eval-index-tab" onclick="CRM_UI.scrollToEvalSection('evalSecIdea')">
+                  <span>💡</span> 3. Startup Idea &amp; Pitch
+                </button>
+                <button type="button" class="eval-index-tab" onclick="CRM_UI.scrollToEvalSection('evalSecTrl')">
+                  <span>🎚️</span> 4. Evaluation &amp; TRL (Click/Drag)
+                </button>
+                <button type="button" class="eval-index-tab" onclick="CRM_UI.scrollToEvalSection('evalSecPipeline')">
+                  <span>🚀</span> 5. Pipeline &amp; Next Action
+                </button>
+                <button type="button" class="eval-index-tab" onclick="CRM_UI.scrollToEvalSection('evalSecConsent')">
+                  <span>📝</span> 6. Consent &amp; Notes
+                </button>
+              </div>
+
+              <!-- Index Section 1: Organisation & Sectors -->
+              <div class="eval-section-container" id="evalSecOrg">
+                <div class="form-section-title" style="display:flex; align-items:center; justify-content:space-between;">
+                  <span>1. Organisation &amp; Sectors</span>
+                  <span class="badge badge-teal" style="font-size:10px;">Optional Details</span>
+                </div>
+                <div class="form-grid-3">
+                  <div class="form-field">
+                    <label class="form-label">Organisation Type</label>
+                    <select class="form-select" id="leadOrgTypeSelect"></select>
+                  </div>
+                  <div class="form-field">
+                    <label class="form-label">Organisation Size</label>
+                    <select class="form-select" id="leadOrgSizeSelect"></select>
+                  </div>
+                  <div class="form-field">
+                    <label class="form-label">Website</label>
+                    <input class="form-input" id="formWebsite" type="url" placeholder="https://example.com">
+                  </div>
+                  <div class="form-field col-span-3">
+                    <label class="form-label">Location (City, State, Country)</label>
+                    <input class="form-input" id="formLocation" placeholder="e.g. Bengaluru, Karnataka, India">
+                  </div>
+                  <div class="form-field col-span-3">
+                    <label class="form-label">Sector Specialisation <span class="text-muted">(select all that apply)</span></label>
+                    <div class="checkbox-tag-cloud" id="formSectorsCloud"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Index Section 2: ETM 2026 Collaboration Tracks -->
+              <div class="eval-section-container" id="evalSecTracks">
+                <div class="form-section-title" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+                  <span>2. ETM 2026 Context &amp; Collaboration Tracks</span>
+                  <span class="badge badge-emerald" style="font-size:11px; font-weight:700;">✓ Event Logs Auto-Entered</span>
+                </div>
+                <div class="form-grid-3">
+                  <div class="form-field">
+                    <label class="form-label">
+                      <span>Lead Source</span>
+                      <span class="badge badge-teal" style="font-size:10px; font-weight:600; margin-left:4px;">⚡ Auto-logged</span>
+                    </label>
+                    <select class="form-select" id="leadSourceSelect"></select>
+                  </div>
+                  <div class="form-field">
+                    <label class="form-label">
+                      <span>Interaction Date</span>
+                      <span class="badge badge-teal" style="font-size:10px; font-weight:600; margin-left:4px;">⚡ Auto-logged (Today)</span>
+                    </label>
+                    <input class="form-input" id="formInteractionDate" type="date">
+                  </div>
+                  <div class="form-field">
+                    <label class="form-label">Priority Level</label>
+                    <select class="form-select" id="leadPrioritySelect" style="display:none;"></select>
+                    <div class="interactive-pill-group" id="interactivePriorityGroup">
+                      <button type="button" class="interactive-pill" data-priority="Low" onclick="CRM_UI.selectInteractivePriority('Low')">🌱 Low</button>
+                      <button type="button" class="interactive-pill active" data-priority="Normal" onclick="CRM_UI.selectInteractivePriority('Normal')">⚡ Normal</button>
+                      <button type="button" class="interactive-pill" data-priority="High" onclick="CRM_UI.selectInteractivePriority('High')">🔥 High</button>
+                      <button type="button" class="interactive-pill" data-priority="Strategic" onclick="CRM_UI.selectInteractivePriority('Strategic')">💎 Strategic</button>
+                    </div>
+                  </div>
+                  <div class="form-field col-span-3">
+                    <label class="form-label">ETM 2026 Themes / Tracks of Interest</label>
+                    <div class="checkbox-tag-cloud" id="formTracksCloud"></div>
+                  </div>
+                  <div class="form-field col-span-3">
+                    <label class="form-label">Collaboration Interests with Anna Incubator</label>
+                    <div class="checkbox-tag-cloud" id="formInterestsCloud"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Index Section 3: Incubation Process Interest & Startup Idea -->
+              <div class="eval-section-container" id="evalSecIdea">
+                <div class="form-section-title" style="display:flex; align-items:center; justify-content:space-between;">
+                  <span>3. Incubation Process Interest &amp; Startup Idea</span>
+                  <span class="badge badge-teal" style="font-size:10px; font-weight:700;">Fast Desk Capture</span>
+                </div>
+                <div class="form-grid-3">
+                  <div class="form-field col-span-2">
+                    <label class="form-label">Interested in Incubation Process?</label>
+                    <select class="form-select" id="formIncubationInterest"></select>
+                  </div>
+                  <div class="form-field">
+                    <label class="form-label">Primary DeepTech Sector</label>
+                    <select class="form-select" id="formPrimarySector"></select>
+                  </div>
+                  <div class="form-field col-span-2">
+                    <label class="form-label">Startup / Technology Idea Title</label>
+                    <input class="form-input" id="formIdeaTitle" maxlength="150" placeholder="e.g. Membrane-Based Green Hydrogen Purifier">
+                  </div>
+                  <div class="form-field">
+                    <label class="form-label">Intellectual Property / Patent Status</label>
+                    <select class="form-select" id="formIpStatus"></select>
+                  </div>
+                  <div class="form-field col-span-3">
+                    <label class="form-label">One-Line Idea Pitch / Technology Summary</label>
+                    <textarea class="form-textarea" id="formIdeaPitch" rows="2" maxlength="1000" placeholder="Describe the core technology, problem addressed, and key proprietary metric..."></textarea>
+                  </div>
+                  <div class="form-field col-span-3">
+                    <label class="form-label">Incubation Support Desired from Anna Incubator <span class="text-muted">(select all that apply)</span></label>
+                    <div class="checkbox-tag-cloud" id="formIncubationSupportCloud"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Index Section 4: Interactive Evaluation & Click / Drag TRL Scale -->
+              <div class="eval-section-container" id="evalSecTrl">
+                <div class="form-section-title" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+                  <span>4. Startup Evaluation: Needs, Capability &amp; Technology Readiness Level (TRL)</span>
+                  <span class="badge badge-teal" style="font-size:11px; font-weight:700;">🎚️ Click or Drag to Evaluate</span>
+                </div>
+
+                <!-- Interactive Click / Drag TRL 1-9 Scale Widget -->
+                <div class="trl-interactive-container">
+                  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">
+                    <label style="font-size:13px; font-weight:800; color:var(--teal-900); display:flex; align-items:center; gap:6px;">
+                      <span>🔬</span> Technology Readiness Level (TRL 1–9 Evaluation):
+                    </label>
+                    <span class="text-muted" style="font-size:11px;">Drag slider or click any level below</span>
+                  </div>
+
+                  <!-- Range Slider for Dragging -->
+                  <div class="trl-drag-slider-wrap">
+                    <input type="range" class="trl-drag-slider" id="evalTrlSlider" min="1" max="9" value="3" step="1" oninput="CRM_UI.handleTrlSliderInput(this.value)">
+                    <div class="trl-slider-ticks">
+                      <span>TRL 1</span>
+                      <span>TRL 2</span>
+                      <span>TRL 3</span>
+                      <span>TRL 4</span>
+                      <span>TRL 5</span>
+                      <span>TRL 6</span>
+                      <span>TRL 7</span>
+                      <span>TRL 8</span>
+                      <span>TRL 9</span>
+                    </div>
+                  </div>
+
+                  <!-- 9 Interactive Clickable Level Cards -->
+                  <div class="trl-cards-grid" id="evalTrlCardsGrid">
+                    <div class="trl-card" data-trl="1" onclick="CRM_UI.setTrlLevel(1)">
+                      <div class="trl-card-num">TRL 1</div>
+                      <div class="trl-card-title">Basic Idea</div>
+                    </div>
+                    <div class="trl-card" data-trl="2" onclick="CRM_UI.setTrlLevel(2)">
+                      <div class="trl-card-num">TRL 2</div>
+                      <div class="trl-card-title">Concept</div>
+                    </div>
+                    <div class="trl-card active" data-trl="3" onclick="CRM_UI.setTrlLevel(3)">
+                      <div class="trl-card-num">TRL 3</div>
+                      <div class="trl-card-title">Proof of Concept</div>
+                    </div>
+                    <div class="trl-card" data-trl="4" onclick="CRM_UI.setTrlLevel(4)">
+                      <div class="trl-card-num">TRL 4</div>
+                      <div class="trl-card-title">Lab Validated</div>
+                    </div>
+                    <div class="trl-card" data-trl="5" onclick="CRM_UI.setTrlLevel(5)">
+                      <div class="trl-card-num">TRL 5</div>
+                      <div class="trl-card-title">Component Tested</div>
+                    </div>
+                    <div class="trl-card" data-trl="6" onclick="CRM_UI.setTrlLevel(6)">
+                      <div class="trl-card-num">TRL 6</div>
+                      <div class="trl-card-title">Prototype Demo</div>
+                    </div>
+                    <div class="trl-card" data-trl="7" onclick="CRM_UI.setTrlLevel(7)">
+                      <div class="trl-card-num">TRL 7</div>
+                      <div class="trl-card-title">Field Pilot</div>
+                    </div>
+                    <div class="trl-card" data-trl="8" onclick="CRM_UI.setTrlLevel(8)">
+                      <div class="trl-card-num">TRL 8</div>
+                      <div class="trl-card-title">Pre-Commercial</div>
+                    </div>
+                    <div class="trl-card" data-trl="9" onclick="CRM_UI.setTrlLevel(9)">
+                      <div class="trl-card-num">TRL 9</div>
+                      <div class="trl-card-title">Market Ready</div>
+                    </div>
+                  </div>
+
+                  <!-- Live Dynamic Status Feedback Display -->
+                  <div class="trl-status-display" id="trlStatusDisplay">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                      <span class="badge badge-teal" id="trlStatusBadge" style="font-size:11px; font-weight:800;">TRL 3 · Feasibility</span>
+                      <span style="font-weight:700; color:var(--teal-900);" id="trlStatusTitle">Analytical and experimental critical function proof of concept.</span>
+                    </div>
+                    <span class="text-muted" style="font-size:11px;" id="trlStatusRecommendation">Recommended: Anna Incubator Pre-Seed Lab Grant &amp; Faculty Mentorship</span>
+                  </div>
+
+                  <!-- Hidden/Synced Select to maintain full backend compatibility -->
+                  <select class="form-select" id="leadReadinessSelect" style="display:none;"></select>
+                </div>
+
+                <div class="form-grid-3" style="margin-top:14px;">
+                  <div class="form-field col-span-2">
+                    <label class="form-label">Identified Problem or Need</label>
+                    <textarea class="form-textarea" id="formProblemNeed" rows="2" maxlength="2000" placeholder="What core problem or challenge is the startup addressing? What incubation support do they require?"></textarea>
+                  </div>
+                  <div class="form-field">
+                    <label class="form-label">Estimated Opportunity / Commercial Value</label>
+                    <div class="flex-center gap-8">
+                      <select class="form-select" id="leadCurrencySelect" style="width:110px;"></select>
+                      <input class="form-input" id="formEstimatedValue" type="number" min="0" placeholder="Optional amount">
+                    </div>
+                  </div>
+                  <div class="form-field col-span-3">
+                    <label class="form-label">Capability / Solution Offered</label>
+                    <textarea class="form-textarea" id="formCapability" rows="2" maxlength="2000" placeholder="What innovative technology, proprietary IP, or research-backed solution does the startup offer?"></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Index Section 5: Conversion Pipeline & Next Action -->
+              <div class="eval-section-container" id="evalSecPipeline">
+                <div class="form-section-title" style="display:flex; align-items:center; justify-content:space-between;">
+                  <span>5. Conversion Pipeline &amp; Scheduled Next Action</span>
+                  <span class="badge badge-slate" style="font-size:10px;">1-Click Stage Selector</span>
+                </div>
+
+                <!-- 1-Click Interactive Pipeline Stage Buttons -->
+                <div style="margin-bottom:14px;">
+                  <label class="form-label">Conversion Stage <span class="required-star">*</span></label>
+                  <select class="form-select" id="leadStageSelect" style="display:none;" required></select>
+                  <div class="interactive-pill-group" id="interactiveStageGroup">
+                    <button type="button" class="interactive-pill active" data-stage="New" onclick="CRM_UI.selectInteractiveStage('New')">🟢 New</button>
+                    <button type="button" class="interactive-pill" data-stage="Contacted" onclick="CRM_UI.selectInteractiveStage('Contacted')">💬 Contacted</button>
+                    <button type="button" class="interactive-pill" data-stage="Qualified" onclick="CRM_UI.selectInteractiveStage('Qualified')">⭐ Qualified</button>
+                    <button type="button" class="interactive-pill" data-stage="Meeting scheduled" onclick="CRM_UI.selectInteractiveStage('Meeting scheduled')">📅 Meeting Scheduled</button>
+                    <button type="button" class="interactive-pill" data-stage="In discussion" onclick="CRM_UI.selectInteractiveStage('In discussion')">🤝 In Discussion</button>
+                    <button type="button" class="interactive-pill" data-stage="Proposal / pilot planning" onclick="CRM_UI.selectInteractiveStage('Proposal / pilot planning')">📑 Proposal / Pilot</button>
+                    <button type="button" class="interactive-pill" data-stage="Converted" onclick="CRM_UI.selectInteractiveStage('Converted')">🏆 Converted</button>
+                    <button type="button" class="interactive-pill" data-stage="Closed – no action" onclick="CRM_UI.selectInteractiveStage('Closed – no action')">⚪ Closed – no action</button>
+                  </div>
+                </div>
+
+                <div class="form-grid-3">
+                  <div class="form-field">
+                    <label class="form-label">Assigned Staff Owner</label>
+                    <select class="form-select" id="leadOwnerSelect"></select>
+                  </div>
+                  <div class="form-field">
+                    <label class="form-label">Next Agreed Follow-up Date</label>
+                    <input class="form-input" id="formFollowUpDate" type="date">
+                  </div>
+                  <div class="form-field" id="closedReasonFieldWrap" style="display:none;">
+                    <label class="form-label">Closed Reason <span class="required-star">*</span></label>
+                    <select class="form-select" id="leadClosedReasonSelect"></select>
+                  </div>
+                  <div class="form-field col-span-2">
+                    <label class="form-label">Next Action Description</label>
+                    <input class="form-input" id="formNextAction" placeholder="e.g. Schedule virtual pitch review with Anna Incubator investment committee">
+                  </div>
+                  <div class="form-field col-span-3">
+                    <label class="form-label">Follow-up Outcome (if completed)</label>
+                    <input class="form-input" id="formFollowUpOutcome" placeholder="Summary of results if this conversation concluded">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Index Section 6: Consent & Discussion Notes -->
+              <div class="eval-section-container" id="evalSecConsent">
+                <div class="form-section-title">6. Consent, Data Safeguards &amp; Discussion Notes</div>
+                <div class="form-grid-3">
+                  <div class="form-field">
+                    <label class="form-label">Consent to Follow Up <span class="required-star">*</span></label>
+                    <select class="form-select" id="leadConsentSelect" required></select>
+                  </div>
+                  <div class="form-field">
+                    <label class="form-label">Consent Capture Method</label>
+                    <select class="form-select" id="leadConsentMethodSelect"></select>
+                  </div>
+                  <div class="form-field">
+                    <label class="form-label">Consent Notes</label>
+                    <input class="form-input" id="formConsentNotes" placeholder="e.g. Exchanged visiting card at Anna Incubator stall A-14">
+                  </div>
+                  <div class="form-field col-span-3">
+                    <label class="form-label">General Event &amp; Conversation Notes</label>
+                    <textarea class="form-textarea" id="formNotes" rows="3" maxlength="2000" placeholder="Important conversational details, incubator evaluation impressions, references, referrals..."></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Page 2 Action Buttons -->
+              <div class="step-actions-row" style="margin-top:24px;">
+                <button type="button" class="btn" onclick="CRM_UI.setFormStep(1)">← Back to Fast Intake (Page 1)</button>
+                <div class="flex-center gap-10" style="flex-wrap: wrap;">
+                  <button type="button" class="btn btn-outline-teal" onclick="CRM_UI.quickSaveLead(false, 'dashboard')">
+                    <span>⚡</span> Save &amp; Go to Dashboard
+                  </button>
+                  <button type="button" class="btn btn-record-direct" id="btnSubmitAndRecordStep2" onclick="CRM_UI.quickSaveLead(true, 'dashboard')">
+                    <span>🎙️</span> Save &amp; Record Conversation
+                  </button>
+                  <button type="submit" class="btn btn-primary" id="leadFormSubmitBtn">
+                    <span>💾</span> Submit Complete Application
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </section>
+
+
+      <!-- =====================================================================
+           SCREEN 5: FOLLOW-UP TASK VIEW
+           ===================================================================== -->
+      <section class="crm-screen" id="screen-tasks">
+        <div class="card-panel">
+          <div class="card-panel-head">
+            <div>
+              <h2 class="card-panel-title"><span>⏰</span> Follow-up Action Manager</h2>
+              <div class="card-panel-sub">Manage upcoming commitments, record outcomes, and track conversion velocity.</div>
+            </div>
+          </div>
+
+          <!-- Tasks Buckets Navigation -->
+          <div class="nav-tabs" style="margin-bottom: 18px; max-width: 580px;">
+            <button class="nav-tab-btn active task-tab-btn" data-tab="overdue">
+              ⚠️ Overdue (<span id="taskCountOverdue">0</span>)
+            </button>
+            <button class="nav-tab-btn task-tab-btn" data-tab="today">
+              📅 Today (<span id="taskCountToday">0</span>)
+            </button>
+            <button class="nav-tab-btn task-tab-btn" data-tab="upcoming">
+              ⏳ Upcoming (<span id="taskCountUpcoming">0</span>)
+            </button>
+            <button class="nav-tab-btn task-tab-btn" data-tab="completed">
+              ✓ Completed (<span id="taskCountCompleted">0</span>)
+            </button>
+          </div>
+
+          <!-- Dynamic Tasks List -->
+          <div id="tasksListContainer">
+            <!-- Populated dynamically via CRM_UI.renderTasksView() -->
+          </div>
+        </div>
+      </section>
+
+
+      <!-- =====================================================================
+           SCREEN 6: EXCEL & DATA MANAGEMENT
+           ===================================================================== -->
+      <section class="crm-screen" id="screen-sync">
+        <!-- Overview Stats -->
+        <div class="sync-overview-cards">
+          <div class="card-panel">
+            <span class="metric-label">Total Leads Stored</span>
+            <span class="metric-value" id="syncOverviewTotalLeads">0</span>
+            <span class="metric-sub">Local browser & server mirror</span>
+          </div>
+          <div class="card-panel">
+            <span class="metric-label">Total Activities Logged</span>
+            <span class="metric-value" id="syncOverviewTotalActivities">0</span>
+            <span class="metric-sub">Interactions, notes & calls</span>
+          </div>
+          <div class="card-panel">
+            <span class="metric-label">Last Successful Sync</span>
+            <span class="metric-value" style="font-size:16px; margin-top:8px;" id="syncOverviewLastSyncTime">—</span>
+            <span class="metric-sub">Automated local disk backup</span>
+          </div>
+        </div>
+
+        <!-- Master Excel Database Backend & Audio Transcriptions Live Card -->
+        <div class="card-panel" style="border: 2px solid var(--teal-600); background:#f0fdfa; margin-bottom: 24px; box-shadow: var(--shadow-sm);">
+          <div class="card-panel-head" style="margin-bottom:8px;">
+            <h3 class="card-panel-title" style="color:var(--teal-900); font-size:16px;">
+              <span>📊</span> Master Excel Database Backend (<code>data/etm_database.xlsx</code>)
+            </h3>
+            <span class="badge badge-emerald" id="excelDbStatusBadge">✓ Live Synchronized</span>
+          </div>
+          <p style="font-size:13px; color:var(--ink-800); line-height:1.5; margin-bottom:14px;">
+            The CRM engine maintains an active, multi-sheet master Excel database. <strong>Audio transcriptions, conversation segments, recordings, attendee leads, and audit histories</strong> are continuously written into dedicated sheets (<code>Transcripts</code>, <code>TranscriptSegments</code>, <code>Recordings</code>, <code>Leads</code>, <code>Activities</code>, <code>Lists</code>, <code>Users</code>).
+          </p>
+          <div class="flex-center justify-between" style="flex-wrap:wrap; gap:12px; background:#fff; padding:12px 16px; border-radius:var(--radius-sm); border:1px solid var(--teal-200);">
+            <div class="flex-center gap-16" style="font-size:12px; color:var(--ink-700); flex-wrap:wrap;">
+              <span>📁 Path: <strong id="excelDbFileName" style="color:var(--teal-900);">data/etm_database.xlsx</strong></span>
+              <span>⚖️ Size: <strong id="excelDbFileSize">—</strong></span>
+              <span>🎙️ Transcripts: <strong id="excelDbTranscriptsCount">—</strong></span>
+              <span>👥 Leads: <strong id="excelDbLeadsCount">—</strong></span>
+              <span>⏱️ Updated: <strong id="excelDbLastUpdated">—</strong></span>
+            </div>
+            <div class="flex-center gap-8">
+              <button class="btn btn-primary btn-sm" id="btnDownloadMasterExcelDb">
+                <span>📥</span> Download Excel Database (.xlsx)
+              </button>
+              <button class="btn btn-outline-teal btn-sm" id="btnResyncExcelDb">
+                <span>🔄</span> Re-Sync Excel DB
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PostgreSQL & pgAdmin 4 Live Database Server Card -->
+        <div class="card-panel" id="pgadminDatabaseCard" style="border: 2px solid #336791; background:#f4f8fb; margin-bottom: 24px; box-shadow: var(--shadow-sm);">
+          <div class="card-panel-head" style="margin-bottom:8px;">
+            <div class="flex-center gap-8">
+              <span style="font-size:22px;">🐘</span>
+              <div>
+                <h3 class="card-panel-title" style="color:#1d436c; font-size:16px; margin:0; display:flex; align-items:center; gap:8px;">
+                  PostgreSQL &amp; pgAdmin 4 Live Server Database
+                  <span class="badge" id="pgadminConnectedBadge" style="background:#e2e8f0; color:#334155; font-size:11px;">Initializing</span>
+                </h3>
+                <span class="text-muted" style="font-size:11px;">Dual-engine live database parallel to Excel · Full audit trail &amp; zero data loss soft-delete</span>
+              </div>
+            </div>
+            <div class="flex-center gap-8">
+              <button class="btn btn-outline-teal btn-sm" id="btnOpenPgSettingsCard" onclick="CRM_UI.openPostgresSettingsModal()">
+                <span>⚙️</span> pgAdmin Config
+              </button>
+              <button class="btn btn-primary btn-sm" id="btnResyncPostgresDb" onclick="CRM_UI.triggerPostgresSync()">
+                <span>⚡</span> Sync to PostgreSQL
+              </button>
+            </div>
+          </div>
+
+          <p style="font-size:13px; color:var(--ink-800); line-height:1.5; margin-bottom:14px;">
+            Connected to the server's PostgreSQL service (<code>postgresql-x64-18</code> on <code>localhost:5432</code>). View tables and query views live inside <strong>pgAdmin 4</strong> (<code>C:\Program Files\PostgreSQL\18\pgAdmin 4</code>). When an attendee is deleted, they are removed from active dashboard pipelines, while all transcripts, audio files, and event logs remain permanently preserved in the PostgreSQL tables and views.
+          </p>
+
+          <div style="background:#fff; border-radius:var(--radius-sm); border:1px solid #bfdbfe; padding:12px 16px; margin-bottom:12px;">
+            <div class="flex-center justify-between" style="flex-wrap:wrap; gap:12px; font-size:12px; color:var(--ink-700);">
+              <span>🖥️ Server: <strong id="pgStatusHost" style="color:#1d436c;">localhost:5432</strong></span>
+              <span>🗄️ Database: <strong id="pgStatusDb" style="color:#1d436c;">anna_etm_crm</strong></span>
+              <span>👥 Active Leads: <strong id="pgCountActiveLeads">—</strong></span>
+              <span>📦 Preserved Archived: <strong id="pgCountArchivedLeads">—</strong></span>
+              <span>📜 Preserved Event Logs: <strong id="pgCountActivities">—</strong></span>
+              <span>🎙️ Transcripts: <strong id="pgCountTranscripts">—</strong></span>
+            </div>
+            <div id="pgStatusAlertMsg" style="margin-top:8px; font-size:11px; padding:6px 10px; border-radius:var(--radius-xs); background:#f8fafc; border:1px solid #e2e8f0; color:#475569; display:flex; align-items:center; justify-content:space-between;">
+              <span id="pgStatusAlertText">PostgreSQL service detected on localhost:5432. Connect with your pgAdmin superuser password to enable live streaming tables.</span>
+              <button class="btn btn-xs btn-outline-teal" onclick="CRM_UI.downloadPostgresSchema()" style="padding:2px 8px; font-size:10px;">
+                <span>📄</span> Download SQL Schema
+              </button>
+            </div>
+          </div>
+
+          <!-- pgAdmin Quick Query Reference -->
+          <div style="background:#0f172a; border-radius:var(--radius-sm); padding:10px 14px; color:#94a3b8; font-size:11px; font-family:monospace; line-height:1.6;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px; color:#cbd5e1; font-weight:600;">
+              <span>pgAdmin 4 Live Views &amp; Queries:</span>
+              <button type="button" class="btn btn-xs" style="padding:1px 6px; font-size:10px; background:#1e293b; color:#93c5fd; border:1px solid #334155;" onclick="CRM_UI.copyPgSqlQueries()">Copy Queries</button>
+            </div>
+            <div><span style="color:#38bdf8;">SELECT</span> * <span style="color:#38bdf8;">FROM</span> view_active_dashboard_leads; <span style="color:#64748b;">-- Active pipeline leads only</span></div>
+            <div><span style="color:#38bdf8;">SELECT</span> * <span style="color:#38bdf8;">FROM</span> view_all_event_logs <span style="color:#38bdf8;">ORDER BY</span> activity_at <span style="color:#38bdf8;">DESC</span>; <span style="color:#64748b;">-- All logs (including archived attendees)</span></div>
+            <div><span style="color:#38bdf8;">SELECT</span> * <span style="color:#38bdf8;">FROM</span> view_deleted_leads_archive; <span style="color:#64748b;">-- Preserved soft-deleted attendees</span></div>
+          </div>
+        </div>
+
+        <!-- Multi-User Architecture Notice -->
+        <div class="card-panel" style="border-left: 4px solid var(--gold-500); background:#fffef9; margin-bottom: 24px;">
+          <h3 style="margin: 0 0 6px 0; font-size: 16px; color: var(--gold-600); display: flex; align-items: center; gap: 8px;">
+            <span>ℹ️</span> Multi-User Sync & Excel File Handoff Notice
+          </h3>
+          <p style="margin: 0; font-size: 13px; color: var(--ink-700); line-height: 1.6;">
+            <strong>Important:</strong> An <code>.xlsx</code> workbook is an offline file format designed for periodic handoff and reporting, <em>not</em> simultaneous multi-user database synchronization. If multiple staff members edit copies simultaneously, changes will diverge.
+            <br>
+            <strong>Best Practice for ETM 2026:</strong> Designate a single event desk lead to export/import daily master workbooks, or connect this app's storage layer to a shared PostgreSQL / Supabase or Microsoft Lists / Dataverse database.
+          </p>
+        </div>
+
+        <!-- 2-Column Section: Workbook Import & Export -->
+        <div class="dashboard-grid">
+          <!-- Left: Import Workbook / CSV -->
+          <div class="card-panel">
+            <div class="card-panel-head">
+              <h3 class="card-panel-title"><span>📥</span> Import Excel or CSV</h3>
+            </div>
+            <p class="text-muted" style="font-size:12px; margin-top:0;">
+              Upload an <code>.xlsx</code> or <code>.csv</code> file. Columns will be automatically mapped, validated row-by-row, and pre-checked for conflicts before merging.
+            </p>
+
+            <div class="dropzone-box" id="excelDropzone">
+              <div style="font-size:36px; margin-bottom:8px;">📄</div>
+              <div style="font-weight:700; font-size:15px; color:var(--teal-900);">Click or Drag & Drop Excel / CSV file here</div>
+              <div class="text-muted" style="font-size:12px; margin-top:4px;">Supports .xlsx, .xls, and .csv files</div>
+              <input type="file" id="excelFileInput" accept=".xlsx,.xls,.csv" style="display:none;">
+            </div>
+          </div>
+
+          <!-- Right: Export & Backup Options -->
+          <div class="card-panel">
+            <div class="card-panel-head">
+              <h3 class="card-panel-title"><span>📤</span> Export & Database Backup</h3>
+            </div>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div>
+                <button class="btn btn-primary w-full" id="btnExportExcelSync">
+                  <span>📊</span> Export Complete Workbook (.xlsx)
+                </button>
+                <div class="text-muted" style="font-size:11px; margin-top:4px;">
+                  Includes 4 sheets: <code>Leads</code> (40 columns), <code>Activities</code>, <code>Lists</code>, and <code>Users</code>.
+                </div>
+              </div>
+
+              <div>
+                <button class="btn w-full" id="btnExportCsvSync">
+                  <span>📄</span> Export Contacts Table (.csv)
+                </button>
+                <div class="text-muted" style="font-size:11px; margin-top:4px;">
+                  Standard comma-separated leads file for quick spreadsheets.
+                </div>
+              </div>
+
+              <div style="border-top:1px solid var(--border-light); padding-top:12px; margin-top:4px;">
+                <button class="btn btn-outline-teal w-full" id="btnDownloadBackup">
+                  <span>💾</span> Download JSON Backup Snapshot
+                </button>
+                <div class="text-muted" style="font-size:11px; margin-top:4px;">
+                  Complete portable snapshot including full audit logs and activities.
+                </div>
+              </div>
+
+              <div>
+                <input type="file" id="jsonRestoreFile" accept=".json" style="display:none;">
+                <button class="btn w-full" id="btnTriggerRestore">
+                  <span>🔄</span> Restore Database from JSON Snapshot
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Audit Trail -->
+        <div class="card-panel">
+          <div class="card-panel-head">
+            <h3 class="card-panel-title"><span>📜</span> System Audit Log</h3>
+          </div>
+          <div id="syncAuditTrailList">
+            <!-- Populated dynamically via CRM_UI.renderSyncView() -->
+          </div>
+        </div>
+      </section>
+
+
+      <!-- =====================================================================
+           SCREEN 7: GLOBAL RECORDINGS & TRANSCRIPTS DIRECTORY
+           ===================================================================== -->
+      <section class="crm-screen" id="screen-recordings">
+        <div class="toolbar-bar">
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="recordingsSearchInput" placeholder="Search recordings by attendee name, organisation, staff, or transcript keywords...">
+          </div>
+          <div class="flex-center gap-8">
+            <select class="form-select" id="filterRecordingStatus" style="width: auto;">
+              <option value="">All Statuses</option>
+              <option value="completed">Completed</option>
+              <option value="processing">Processing</option>
+              <option value="pending">Pending</option>
+              <option value="failed">Failed</option>
+            </select>
+            <button class="btn btn-primary btn-sm" id="btnRecordAudioScreen7">
+              <span>🎙️</span> Record Conversation
+            </button>
+            <button class="btn btn-outline-teal btn-sm" id="btnExportTranscriptsExcelScreen7">
+              <span>📊</span> Excel Database
+            </button>
+            <span id="recordingsResultsCount" class="text-muted" style="font-size:12px;">Showing 0 recordings</span>
+          </div>
+        </div>
+
+        <div class="metrics-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 20px;">
+          <div class="metric-card">
+            <div class="metric-content">
+              <span class="metric-label">Total Recordings</span>
+              <span class="metric-value" id="metricTotalRecordings">0</span>
+              <span class="metric-sub">Saved locally</span>
+            </div>
+            <div class="metric-icon-wrap">🎙️</div>
+          </div>
+          <div class="metric-card success-card">
+            <div class="metric-content">
+              <span class="metric-label">Completed Transcripts</span>
+              <span class="metric-value" id="metricCompletedTranscripts">0</span>
+              <span class="metric-sub">Whishper processed</span>
+            </div>
+            <div class="metric-icon-wrap">✓</div>
+          </div>
+          <div class="metric-card warning-card">
+            <div class="metric-content">
+              <span class="metric-label">Pending / Processing</span>
+              <span class="metric-value" id="metricPendingTranscripts">0</span>
+              <span class="metric-sub">In local queue</span>
+            </div>
+            <div class="metric-icon-wrap">⏳</div>
+          </div>
+          <div class="metric-card alert-card">
+            <div class="metric-content">
+              <span class="metric-label">Failed Transcripts</span>
+              <span class="metric-value" id="metricFailedTranscripts">0</span>
+              <span class="metric-sub">Can retry locally</span>
+            </div>
+            <div class="metric-icon-wrap">⚠️</div>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="leads-table">
+            <thead>
+              <tr>
+                <th>Date & Time</th>
+                <th>Attendee & Lead ID</th>
+                <th>Organisation</th>
+                <th>Staff</th>
+                <th>Duration</th>
+                <th>Audio Playback</th>
+                <th>Transcription Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="globalRecordingsTableBody">
+              <!-- Populated dynamically via CRM_UI.renderGlobalRecordings() -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+
+  </div><!-- /app-shell -->
+
+
+  <!-- =========================================================================
+       MODALS
+       ========================================================================= -->
+
+  <!-- 1. Duplicate Resolution Modal -->
+  <div class="modal-backdrop" id="duplicateModal" role="dialog" aria-modal="true" aria-labelledby="dupModalTitle">
+    <div class="modal-container modal-lg">
+      <div class="modal-head">
+        <h3 class="modal-title" id="dupModalTitle"><span>⚠️</span> Potential Duplicate Contact Detected</h3>
+        <button class="btn-icon modal-close-btn" aria-label="Close dialog">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin:0 0 10px 0; font-size:13px;" id="dupModalReason">An attendee with matching details was found in the CRM.</p>
+        <div class="badge badge-gold" id="dupMatchField" style="margin-bottom:12px;">Email: user@example.com</div>
+
+        <div class="duplicate-compare-grid">
+          <!-- Existing Record -->
+          <div class="compare-card existing">
+            <div class="compare-card-title">
+              <span>Existing Lead Record</span>
+              <span class="badge badge-teal">In Database</span>
+            </div>
+            <div id="dupExistingSummary"></div>
+          </div>
+
+          <!-- Incoming Candidate -->
+          <div class="compare-card incoming">
+            <div class="compare-card-title">
+              <span>New Submission</span>
+              <span class="badge badge-indigo">New Input</span>
+            </div>
+            <div id="dupIncomingSummary"></div>
+          </div>
+        </div>
+
+        <div style="font-size:12px; color:var(--ink-600); margin-top:14px;">
+          Please select how you want to proceed. The CRM will never silently overwrite existing records.
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn" id="dupBtnKeepSeparate">Keep Separate as New Person</button>
+        <button class="btn btn-outline-teal" id="dupBtnMerge">Merge Information</button>
+        <button class="btn btn-primary" id="dupBtnOpenExisting">Open & Update Existing Lead</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 2. Log Activity Modal -->
+  <div class="modal-backdrop" id="logActivityModal" role="dialog" aria-modal="true" aria-labelledby="activityModalTitle">
+    <div class="modal-container">
+      <div class="modal-head">
+        <h3 class="modal-title" id="activityModalTitle">Log Interaction</h3>
+        <button class="btn-icon modal-close-btn" aria-label="Close dialog">✕</button>
+      </div>
+      <form id="activityLogForm">
+        <input type="hidden" id="activityLeadId">
+        <div class="modal-body">
+          <div class="form-grid-2">
+            <div class="form-field">
+              <label class="form-label">Activity Type</label>
+              <select class="form-select" id="activityTypeSelect">
+                <option value="Call">Phone / WhatsApp Call</option>
+                <option value="Meeting">Meeting / Discussion</option>
+                <option value="Email">Email Communication</option>
+                <option value="Note">General Note</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">Staff Member</label>
+              <input class="form-input" id="activityOwner" value="Staff">
+            </div>
+          </div>
+
+          <div class="form-field mt-16">
+            <label class="form-label">Discussion Summary <span class="required-star">*</span></label>
+            <textarea class="form-textarea" id="activitySummary" required rows="3" placeholder="Key points discussed during the interaction..."></textarea>
+          </div>
+
+          <div class="form-field mt-16">
+            <label class="form-label">Outcome / Agreement</label>
+            <input class="form-input" id="activityOutcome" placeholder="Agreed next step or decision">
+          </div>
+
+          <div class="form-grid-2 mt-16">
+            <div class="form-field">
+              <label class="form-label">Scheduled Next Action</label>
+              <input class="form-input" id="activityNextAction" placeholder="e.g. Send MoU draft">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Follow-up Due Date</label>
+              <input class="form-input" id="activityFollowUpDate" type="date">
+            </div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn modal-close-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Interaction</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- 3. Quick Stage Change Modal -->
+  <div class="modal-backdrop" id="quickStageModal" role="dialog" aria-modal="true" aria-labelledby="quickStageModalTitle">
+    <div class="modal-container">
+      <div class="modal-head">
+        <h3 class="modal-title" id="quickStageModalTitle">Update Conversion Stage</h3>
+        <button class="btn-icon modal-close-btn" aria-label="Close dialog">✕</button>
+      </div>
+      <form id="quickStageForm">
+        <input type="hidden" id="quickStageLeadId">
+        <div class="modal-body">
+          <div class="form-field">
+            <label class="form-label">New Stage <span class="required-star">*</span></label>
+            <select class="form-select" id="quickStageSelect">
+              <option value="New">New</option>
+              <option value="Attempting contact">Attempting contact</option>
+              <option value="Contacted">Contacted</option>
+              <option value="Qualified">Qualified</option>
+              <option value="Meeting scheduled">Meeting scheduled</option>
+              <option value="In discussion">In discussion</option>
+              <option value="Proposal / pilot planning">Proposal / pilot planning</option>
+              <option value="Opportunity">Opportunity</option>
+              <option value="Converted">Converted</option>
+              <option value="Nurture">Nurture</option>
+              <option value="Closed – successful">Closed – successful</option>
+              <option value="Closed – no action">Closed – no action</option>
+            </select>
+          </div>
+
+          <!-- Active stage requirement fields -->
+          <div id="quickStageActiveFields" style="margin-top:14px;">
+            <div class="form-grid-2">
+              <div class="form-field">
+                <label class="form-label">Assigned Owner <span class="required-star">*</span></label>
+                <input class="form-input" id="quickStageOwner">
+              </div>
+              <div class="form-field">
+                <label class="form-label">Next Action Due Date <span class="required-star">*</span></label>
+                <input class="form-input" id="quickStageFollowUpDate" type="date">
+              </div>
+            </div>
+            <div class="form-field mt-16">
+              <label class="form-label">Next Action Description <span class="required-star">*</span></label>
+              <input class="form-input" id="quickStageNextAction" placeholder="e.g. Send partnership proposal">
+            </div>
+          </div>
+
+          <!-- Closed Reason field -->
+          <div id="quickStageClosedFields" style="display:none; margin-top:14px;">
+            <div class="form-field">
+              <label class="form-label">Closed Reason <span class="required-star">*</span></label>
+              <select class="form-select" id="quickStageClosedReason">
+                <option value="">Select reason</option>
+                <option value="Not a fit">Not a fit</option>
+                <option value="No response">No response</option>
+                <option value="No current requirement">No current requirement</option>
+                <option value="Timing">Timing</option>
+                <option value="Duplicate">Duplicate</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-field mt-16">
+            <label class="form-label">Reason / Notes for Stage Change</label>
+            <input class="form-input" id="quickStageOutcome" placeholder="Brief note on why the stage moved">
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn modal-close-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Stage</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- 4. Complete Follow-up Task Modal -->
+  <div class="modal-backdrop" id="completeTaskModal" role="dialog" aria-modal="true" aria-labelledby="completeTaskTitle">
+    <div class="modal-container">
+      <div class="modal-head">
+        <h3 class="modal-title" id="completeTaskTitle">Complete Follow-up Task</h3>
+        <button class="btn-icon modal-close-btn" aria-label="Close dialog">✕</button>
+      </div>
+      <form id="completeTaskForm">
+        <input type="hidden" id="completeTaskLeadId">
+        <div class="modal-body">
+          <div style="background:var(--bg-subtle); padding:10px 14px; border-radius:var(--radius-sm); margin-bottom:14px;">
+            <span class="text-muted" style="font-size:11px;">Current Scheduled Action:</span>
+            <div style="font-weight:700; font-size:13px;" id="completeTaskActionName">—</div>
+          </div>
+
+          <div class="form-field">
+            <label class="form-label">Follow-up Outcome / Results <span class="required-star">*</span></label>
+            <textarea class="form-textarea" id="completeTaskOutcome" required rows="3" placeholder="What was agreed or achieved?"></textarea>
+          </div>
+
+          <div class="form-field mt-16">
+            <label class="form-label">Update Lead Stage</label>
+            <select class="form-select" id="completeTaskNewStage">
+              <option value="Contacted">Contacted</option>
+              <option value="Meeting scheduled">Meeting scheduled</option>
+              <option value="In discussion">In discussion</option>
+              <option value="Proposal / pilot planning">Proposal / pilot planning</option>
+              <option value="Opportunity">Opportunity</option>
+              <option value="Converted">Converted</option>
+              <option value="Nurture">Nurture</option>
+              <option value="Closed – successful">Closed – successful</option>
+              <option value="Closed – no action">Closed – no action</option>
+            </select>
+          </div>
+
+          <div class="form-grid-2 mt-16">
+            <div class="form-field">
+              <label class="form-label">Next Action (if any)</label>
+              <input class="form-input" id="completeTaskNewNextAction" placeholder="Subsequent follow-up task">
+            </div>
+            <div class="form-field">
+              <label class="form-label">Next Due Date</label>
+              <input class="form-input" id="completeTaskNewFollowUpDate" type="date">
+            </div>
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn modal-close-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Mark Task Complete</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- 5. Consent Update Modal -->
+  <div class="modal-backdrop" id="consentUpdateModal" role="dialog" aria-modal="true" aria-labelledby="consentModalTitle">
+    <div class="modal-container">
+      <div class="modal-head">
+        <h3 class="modal-title" id="consentModalTitle">Record Consent</h3>
+        <button class="btn-icon modal-close-btn" aria-label="Close dialog">✕</button>
+      </div>
+      <form id="consentUpdateForm">
+        <input type="hidden" id="consentModalLeadId">
+        <div class="modal-body">
+          <div class="form-field">
+            <label class="form-label">Consent to Contact <span class="required-star">*</span></label>
+            <select class="form-select" id="consentModalStatus">
+              <option value="Yes">Yes · Consent Granted</option>
+              <option value="No">No · Explicitly Declined</option>
+              <option value="Not asked">Not asked</option>
+            </select>
+          </div>
+          <div class="form-field mt-16">
+            <label class="form-label">Consent Capture Channel</label>
+            <select class="form-select" id="consentModalMethod">
+              <option value="In person">In person at stall A-14</option>
+              <option value="Email">Email communication</option>
+              <option value="Phone">Phone call</option>
+              <option value="Website">Website / Delegate portal</option>
+            </select>
+          </div>
+          <div class="form-field mt-16">
+            <label class="form-label">Consent Notes</label>
+            <input class="form-input" id="consentModalNotes" placeholder="Details of how consent was captured">
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="button" class="btn modal-close-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Consent</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- 6. Delete / Archive Confirm Modal -->
+  <div class="modal-backdrop" id="deleteConfirmModal" role="dialog" aria-modal="true">
+    <div class="modal-container" style="max-width: 480px;">
+      <div class="modal-head">
+        <h3 class="modal-title" style="color:var(--rose-700);"><span>🗑️</span> Remove Contact</h3>
+        <button class="btn-icon modal-close-btn" aria-label="Close dialog">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin:0 0 10px 0; font-size:14px;">
+          Are you sure you want to remove <strong id="deleteConfirmLeadName">—</strong> from the active dashboard?
+        </p>
+        <div style="background:#f0fdf4; border:1px solid #86efac; border-radius:var(--radius-xs); padding:10px 12px; font-size:12px; color:#166534; line-height:1.5;">
+          <strong>🛡️ Zero Data Loss Policy:</strong>
+          <br>
+          This attendee will be hidden from the active dashboard metrics, pipelines, and directory table. However, <strong>no data is deleted</strong>. All conversation transcripts, audio recordings, meeting notes, and interaction history remain permanently preserved and accessible in the <strong>Event Logs</strong>, the <strong>Master Excel Database</strong>, and <strong>PostgreSQL pgAdmin</strong>.
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn modal-close-btn">Cancel</button>
+        <button class="btn btn-outline-teal" id="btnConfirmArchiveLead">Archive Lead</button>
+        <button class="btn btn-danger" id="btnConfirmDeleteLead">Remove from Dashboard</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 7. Import Preview & Conflict Modal -->
+  <div class="modal-backdrop" id="importPreviewModal" role="dialog" aria-modal="true">
+    <div class="modal-container modal-lg">
+      <div class="modal-head">
+        <h3 class="modal-title"><span>📥</span> Import Preview & Column Mapping</h3>
+        <button class="btn-icon modal-close-btn" aria-label="Close dialog">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="metrics-grid" style="grid-template-columns: repeat(5, 1fr); gap:8px; margin-bottom:14px;">
+          <div class="metric-card" style="padding:10px;">
+            <div class="metric-content">
+              <span class="metric-label" style="font-size:10px;">Total Rows</span>
+              <span class="metric-value" style="font-size:18px;" id="importTotalRows">0</span>
+            </div>
+          </div>
+          <div class="metric-card success-card" style="padding:10px;">
+            <div class="metric-content">
+              <span class="metric-label" style="font-size:10px;">Valid Rows</span>
+              <span class="metric-value" style="font-size:18px;" id="importValidRows">0</span>
+            </div>
+          </div>
+          <div class="metric-card alert-card" style="padding:10px;">
+            <div class="metric-content">
+              <span class="metric-label" style="font-size:10px;">Invalid Rows</span>
+              <span class="metric-value" style="font-size:18px;" id="importInvalidRows">0</span>
+            </div>
+          </div>
+          <div class="metric-card" style="padding:10px;">
+            <div class="metric-content">
+              <span class="metric-label" style="font-size:10px;">New to Insert</span>
+              <span class="metric-value" style="font-size:18px;" id="importInsertCount">0</span>
+            </div>
+          </div>
+          <div class="metric-card warning-card" style="padding:10px;">
+            <div class="metric-content">
+              <span class="metric-label" style="font-size:10px;">To Update (Matches)</span>
+              <span class="metric-value" style="font-size:18px;" id="importUpdateCount">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="font-size:12px; margin-bottom:10px;">
+          <strong>Mapped Fields:</strong> <span id="importMappedCols" class="text-muted"></span>
+        </div>
+
+        <div id="importErrorsContainer" style="display:none; background:var(--rose-50); border:1px solid var(--rose-600); border-radius:var(--radius-sm); padding:10px; margin-bottom:12px;"></div>
+
+        <div class="text-muted" style="font-size:12px;">
+          Matching records (by LeadID, then email) will update existing contacts with the latest timestamp. A pre-import snapshot will be saved automatically.
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button class="btn modal-close-btn">Cancel</button>
+        <button class="btn btn-primary" id="btnConfirmImport">Confirm & Merge Leads</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 8. Privacy Notice Modal -->
+  <div class="modal-backdrop" id="privacyModal" role="dialog" aria-modal="true">
+    <div class="modal-container" style="max-width: 600px;">
+      <div class="modal-head">
+        <h3 class="modal-title"><span>🛡️</span> Anna Incubator Privacy Notice & Data Policy</h3>
+        <button class="btn-icon modal-close-btn" aria-label="Close dialog">✕</button>
+      </div>
+      <div class="modal-body" style="font-size:13px; line-height:1.6;">
+        <h4 style="margin:0 0 6px 0; color:var(--teal-900);">Event Data Protection Guidelines</h4>
+        <p>
+          Anna Incubator is committed to protecting the privacy of attendees, researchers, and partners at the 29th Energy Technology & Innovation Meet (ETM 2026), Goa.
+        </p>
+        <ul style="padding-left:18px; margin:8px 0;">
+          <li><strong>Purpose of Collection:</strong> Contact details, interests, and notes are collected solely to evaluate incubation opportunities, facilitate industry-academia pilots, and conduct agreed follow-ups.</li>
+          <li><strong>Consent Requirement:</strong> Explicit consent (Yes) is mandatory before initiating outbound calls, emails, or marketing. Outbound outreach is prohibited when consent is "No" or "Not asked".</li>
+          <li><strong>Sensitive Data:</strong> Staff must not collect sensitive personal data (e.g. passwords, financial credentials, personal identification numbers) in conversation notes.</li>
+          <li><strong>Data Retention:</strong> Leads are retained for 180 days post-ETM 2026 for incubation follow-up, after which inactive unconsented records are purged.</li>
+          <li><strong>Data Subject Rights:</strong> Attendees may request access, rectification, or permanent erasure of their records at any time by contacting <code>privacy@anna-incubator.org</code>.</li>
+        </ul>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-primary modal-close-btn">Close Notice</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 9. Audio Transcription & Excel Database Save Modal -->
+  <div class="modal-backdrop" id="recordModal" role="dialog" aria-modal="true">
+    <div class="modal-container" style="max-width: 760px;">
+      <div class="modal-head">
+        <h3 class="modal-title"><span>🎙️</span> Record Attendee Conversation &amp; Auto-Transcribe</h3>
+        <button class="btn-icon modal-close-btn" id="recordModalCloseBtn" aria-label="Close dialog">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Associate Attendee Lead Selector -->
+        <div style="background:var(--bg-subtle); border:1px solid var(--border-light); border-radius:var(--radius-sm); padding:12px; margin-bottom:14px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <span style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--teal-800); letter-spacing:0.5px;">Associate Attendee Lead</span>
+            <span class="badge badge-teal" id="recordModalLeadIdBadge">Auto</span>
+          </div>
+          <div class="form-grid-2">
+            <div>
+              <label class="form-label" style="font-size:11px;">Select Existing Lead</label>
+              <select class="form-select" id="transcribeLeadSelect" style="font-size:12px;"></select>
+            </div>
+            <div>
+              <label class="form-label" style="font-size:11px;">Or New Attendee Name / Org</label>
+              <input type="text" class="form-input" id="transcribeAttendeeName" placeholder="e.g. Dr. Ramesh Nair (BioEnergy Labs)" style="font-size:12px;">
+            </div>
+          </div>
+        </div>
+
+        <!-- Privacy & Local Storage Notice -->
+        <div style="background:#f0fdf4; border:1px solid var(--emerald-600); border-radius:var(--radius-sm); padding:10px 14px; font-size:12px; line-height:1.5; color:var(--ink-800); margin-bottom:14px;">
+          <strong style="color:var(--emerald-800); display:flex; align-items:center; gap:6px; margin-bottom:2px;">
+            <span>🛡️</span> In-Person Conversation Recorder · 100% Local &amp; Private
+          </strong>
+          Live dialogue is processed locally via <strong>Whishper</strong>. Audio and complete transcripts are automatically saved into the attendee's activity log and Master Excel Database (<code>data/etm_database.xlsx</code>).
+        </div>
+
+        <!-- Mandatory Affirmative Consent -->
+        <div style="background:#fffbeb; border:1px solid var(--gold-500); border-radius:var(--radius-sm); padding:12px 14px; margin-bottom:14px;">
+          <label style="display:flex; align-items:flex-start; gap:10px; cursor:pointer; font-size:12px; font-weight:600; color:var(--ink-900);">
+            <input type="checkbox" id="recordConsentCheckbox" checked style="margin-top:2px; width:16px; height:16px; cursor:pointer;">
+            <span>I confirm that participants affirmatively agree to audio recording and evaluation notes for incubation records. <span style="color:var(--rose-600);">*</span></span>
+          </label>
+        </div>
+
+        <!-- Language & Model Settings -->
+        <div class="form-grid-2" style="margin-bottom:14px;">
+          <div class="form-field">
+            <label class="form-label" style="font-size:11px;">Spoken Language</label>
+            <select class="form-select" id="recordLanguageSelect" style="font-size:12px;">
+              <option value="auto">Auto-detect Language</option>
+              <option value="en">English</option>
+              <option value="hi">Hindi</option>
+              <option value="ta">Tamil</option>
+              <option value="te">Telugu</option>
+              <option value="mr">Marathi</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label" style="font-size:11px;">Whishper Model Size</label>
+            <select class="form-select" id="recordModelSizeSelect" style="font-size:12px;">
+              <option value="base">Base (Fastest)</option>
+              <option value="small" selected>Small (Recommended)</option>
+              <option value="medium">Medium (Higher Accuracy)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- LIVE MICROPHONE RECORDING -->
+        <div id="modalSectionMic">
+          <!-- Microphone Instant Ready Status Indicator -->
+          <div id="micStatusNotice" style="display:flex; align-items:center; justify-content:space-between; background:#f0fdf4; border:1px solid #86efac; border-radius:var(--radius-sm); padding:8px 14px; margin-bottom:12px; font-size:12px;">
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span id="micStatusDot" style="width:10px; height:10px; border-radius:50%; background:#22c55e; display:inline-block; box-shadow:0 0 6px rgba(34,197,94,0.6);"></span>
+              <span id="micStatusText" style="font-weight:600; color:#15803d;">Microphone: Pre-authorized &amp; Ready (Instant 1-Click Recording)</span>
+            </div>
+            <button type="button" class="btn btn-sm btn-outline-teal" id="btnTestMicAccess" style="padding:2px 10px; font-size:11px;" onclick="CRM_UI.warmupMicNow()">
+              Test Mic
+            </button>
+          </div>
+
+          <!-- Live Recording Indicator & Timer Box -->
+          <div class="recording-active-banner" id="recordingBannerBox" style="display:none; margin-bottom:14px;">
+            <div style="display:flex; align-items:center; justify-content:center; margin-bottom:6px;">
+              <span class="recording-pulse-dot" id="recordingPulseDot"></span>
+              <span style="font-weight:700; font-size:14px; color:var(--rose-700);" id="recordingStatusLabel">LIVE RECORDING</span>
+            </div>
+            <div class="recording-timer-display" id="recordTimerDisplay">00:00</div>
+            <div class="text-muted" style="font-size:12px;" id="recordInstructionText">Microphone active. Speak clearly into the device.</div>
+          </div>
+
+          <!-- Live Real-Time Parallel Speech Transcription Streaming Box -->
+          <div class="live-transcription-stream-box" id="liveTranscriptionStreamBox" style="display:none; margin-bottom:14px; padding:12px 14px; background:#faf5ff; border:1px solid #d8b4fe; border-radius:var(--radius-sm);">
+            <div class="flex-center justify-between" style="margin-bottom:6px;">
+              <div class="flex-center gap-6" style="font-size:12px; font-weight:700; color:#6b21a8;">
+                <span class="transcript-interim-pulse"></span>
+                <span>LIVE SPEECH-TO-TEXT STREAM (PARALLEL)</span>
+              </div>
+              <span class="badge" id="liveTranscriptionEngineBadge" style="background:#f3e8ff; color:#7e22ce; font-size:10px;">WebSpeech + Whishper</span>
+            </div>
+            <div class="live-transcript-stream-text" id="liveTranscriptStreamText" style="min-height:54px; max-height:110px; overflow-y:auto; font-size:13px; color:#3b0764; line-height:1.5; font-style:italic; padding:6px 8px; background:#fff; border-radius:var(--radius-xs); border:1px solid #e9d5ff;">
+              Listening... speak clearly to see speech transcribe in real-time.
+            </div>
+            <div class="flex-center justify-between text-muted" style="font-size:11px; margin-top:6px;">
+              <span>Auto-committing live to: <strong>Excel Database</strong> &amp; <strong>PostgreSQL pgAdmin</strong></span>
+              <span id="liveTranscriptCharCount">0 words</span>
+            </div>
+          </div>
+
+          <!-- Recording Controls Row -->
+          <div class="recording-controls-row">
+            <button type="button" class="btn btn-primary" id="btnStartRecording" style="padding:10px 24px; font-weight:700;">
+              <span>🎙️</span> Start Recording
+            </button>
+            <button type="button" class="btn" id="btnPauseRecording" style="display:none;">
+              <span>⏸️</span> Pause
+            </button>
+            <button type="button" class="btn btn-outline-teal" id="btnResumeRecording" style="display:none;">
+              <span>▶️</span> Resume
+            </button>
+            <button type="button" class="btn btn-success" id="btnStopRecording" style="display:none; background:var(--emerald-600); color:#fff;">
+              <span>⏹️</span> Stop &amp; Save to Attendee Logs
+            </button>
+          </div>
+        </div>
+
+        <!-- Saving / Uploading Progress indicator -->
+        <div id="recordProgressBox" style="display:none; margin-top:16px; text-align:center; padding:12px; background:#eff6ff; border:1px solid #bfdbfe; border-radius:var(--radius-sm);">
+          <div class="flex-center justify-center gap-8" style="color:#1e40af; font-weight:600; font-size:13px;">
+            <span class="recording-pulse-dot" style="background:#2563eb;"></span>
+            <span id="recordProgressText">Transcribing audio and committing directly to Excel database...</span>
+          </div>
+        </div>
+
+        <!-- Success Result Box -->
+        <div id="recordSuccessResultBox" style="display:none; margin-top:16px; padding:14px; background:#f0fdf4; border:1px solid var(--emerald-600); border-radius:var(--radius-sm);">
+          <div class="flex-center justify-between" style="margin-bottom:8px;">
+            <strong style="color:var(--emerald-800); font-size:13px; display:flex; align-items:center; gap:6px;">
+              <span>✅</span> Audio Transcribed & Saved in Excel Database!
+            </strong>
+            <span class="badge badge-emerald">Sheet: Transcripts & Recordings</span>
+          </div>
+          <div id="recordSuccessTranscriptPreview" style="font-size:12px; color:var(--ink-800); line-height:1.5; background:#fff; padding:10px; border-radius:var(--radius-xs); border:1px solid var(--border-light); margin-bottom:12px; max-height:120px; overflow-y:auto;">
+          </div>
+          <div class="flex-center justify-between" style="flex-wrap:wrap; gap:8px;">
+            <div class="flex-center gap-8">
+              <button type="button" class="btn btn-primary btn-sm" id="btnGoToDashboardFromResult" onclick="CRM_UI.goToDashboardFromModal()">
+                <span>📊</span> Go to Dashboard →
+              </button>
+              <button type="button" class="btn btn-outline-teal btn-sm" id="btnDownloadExcelFromResult">
+                <span>📥</span> Download Excel (.xlsx)
+              </button>
+            </div>
+            <div class="flex-center gap-8">
+              <button type="button" class="btn btn-sm" id="btnReviewTranscriptFromResult">
+                <span>📄</span> Open Transcript
+              </button>
+              <button type="button" class="btn btn-sm modal-close-btn" onclick="CRM_UI.goToDashboardFromModal()">Done</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-foot">
+        <button type="button" class="btn" id="btnCancelRecording">Close</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 10. Transcript Viewer & Editor Modal -->
+  <div class="modal-backdrop" id="transcriptModal" role="dialog" aria-modal="true">
+    <div class="modal-container modal-lg" style="max-width: 960px;">
+      <div class="modal-head">
+        <div>
+          <h3 class="modal-title"><span>📄</span> Conversation Transcript & Audio</h3>
+          <div class="text-muted" style="font-size:12px; margin-top:2px;" id="transcriptModalSubtitle">Lead: — · Recorded: —</div>
+        </div>
+        <button class="btn-icon modal-close-btn" aria-label="Close dialog">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Audio Player Card -->
+        <div style="background:var(--bg-subtle); border:1px solid var(--border-light); border-radius:var(--radius-md); padding:12px; margin-bottom:16px;">
+          <div class="flex-center justify-between" style="margin-bottom:8px;">
+            <div style="font-size:12px; font-weight:600; color:var(--teal-900);">Local Audio Playback</div>
+            <div class="flex-center gap-8" id="transcriptMetaPills"></div>
+          </div>
+          <audio id="transcriptModalAudio" class="conversation-audio-player" controls preload="metadata"></audio>
+        </div>
+
+        <!-- Processing / Error Banner -->
+        <div id="transcriptStatusBanner" style="display:none; margin-bottom:14px; padding:10px 14px; border-radius:var(--radius-sm); font-size:13px;"></div>
+
+        <!-- View Switch Tabs -->
+        <div class="nav-tabs" style="margin-bottom:14px; max-width:440px;">
+          <button class="nav-tab-btn active transcript-tab-btn" data-tab="segments">
+            <span>⏱️</span> Formatted Segments
+          </button>
+          <button class="nav-tab-btn transcript-tab-btn" data-tab="edit">
+            <span>✏️</span> Editable Text
+          </button>
+          <button class="nav-tab-btn transcript-tab-btn" data-tab="raw">
+            <span>🔍</span> Raw Model Output
+          </button>
+        </div>
+
+        <!-- Tab 1: Segments View -->
+        <div id="transcriptTabSegments" style="max-height:340px; overflow-y:auto; border:1px solid var(--border-light); border-radius:var(--radius-sm); background:#fff;">
+          <div id="transcriptSegmentsList" style="padding:8px 0;"></div>
+        </div>
+
+        <!-- Tab 2: Full Text Editor -->
+        <div id="transcriptTabEdit" style="display:none;">
+          <div class="text-muted" style="font-size:11px; margin-bottom:6px;">Staff corrections are saved directly to disk and logged in activity history. Original model output remains preserved.</div>
+          <textarea class="form-textarea" id="transcriptEditText" rows="12" style="font-family:inherit; font-size:13px; line-height:1.6;"></textarea>
+        </div>
+
+        <!-- Tab 3: Raw JSON / Diagnostic -->
+        <div id="transcriptTabRaw" style="display:none;">
+          <pre id="transcriptRawJson" style="max-height:340px; overflow:auto; background:var(--ink-900); color:#e2e8f0; padding:12px; border-radius:var(--radius-sm); font-size:11px; font-family:monospace; margin:0;"></pre>
+        </div>
+      </div>
+      <div class="modal-foot" style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="flex-center gap-8">
+          <button type="button" class="btn btn-danger btn-sm" id="btnDeleteRecordingFromModal">
+            <span>🗑️</span> Delete Recording
+          </button>
+          <button type="button" class="btn btn-outline-teal btn-sm" id="btnRetryTranscriptionModal">
+            <span>🔄</span> Retry Whishper
+          </button>
+        </div>
+        <div class="flex-center gap-8">
+          <!-- Download Formats Dropdown -->
+          <div style="position:relative; display:inline-block;">
+            <button type="button" class="btn btn-sm" id="btnDownloadDropdown">
+              <span>📥</span> Download ▼
+            </button>
+            <div id="transcriptDownloadMenu" style="display:none; position:absolute; bottom:100%; right:0; background:#fff; border:1px solid var(--border-light); border-radius:var(--radius-sm); box-shadow:var(--shadow-md); z-index:100; min-width:170px; padding:4px 0; margin-bottom:4px;">
+              <a href="#" class="dropdown-item" id="downloadAudioLink" style="display:block; padding:8px 12px; font-size:12px; text-decoration:none; color:var(--ink-800);">🎵 Audio File</a>
+              <a href="#" class="dropdown-item" id="downloadTxtLink" style="display:block; padding:8px 12px; font-size:12px; text-decoration:none; color:var(--ink-800);">📄 Plain Text (.txt)</a>
+              <a href="#" class="dropdown-item" id="downloadVttLink" style="display:block; padding:8px 12px; font-size:12px; text-decoration:none; color:var(--ink-800);">⏱️ WebVTT (.vtt)</a>
+              <a href="#" class="dropdown-item" id="downloadSrtLink" style="display:block; padding:8px 12px; font-size:12px; text-decoration:none; color:var(--ink-800);">🎬 SubRip (.srt)</a>
+              <a href="#" class="dropdown-item" id="downloadJsonLink" style="display:block; padding:8px 12px; font-size:12px; text-decoration:none; color:var(--ink-800);">📊 Normalized JSON</a>
+            </div>
+          </div>
+          <button type="button" class="btn btn-outline-teal btn-sm" id="btnDownloadExcelFromTranscript" title="Download Master Excel Database containing this transcript">
+            <span>📊</span> Excel Database
+          </button>
+          <button type="button" class="btn btn-primary btn-sm" id="btnSaveTranscriptEdits">
+            <span>💾</span> Save Edits
+          </button>
+          <button type="button" class="btn modal-close-btn btn-sm">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       MODAL 11: KEYBOARD SHORTCUTS CHEATSHEET
+       ===================================================================== -->
+  <div class="modal-backdrop" id="shortcutsModal" role="dialog" aria-modal="true" aria-labelledby="shortcutsModalTitle">
+    <div class="modal-card" style="max-width: 620px;">
+      <div class="modal-head">
+        <div>
+          <h3 class="modal-title" id="shortcutsModalTitle"><span>⌨️</span> Event Desk Keyboard Shortcuts</h3>
+          <div class="modal-sub">Fast keyboard access for Anna Incubator staff at ETM 2026.</div>
+        </div>
+        <button class="modal-close-x" onclick="CRM_UI.closeAllModals()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 18px 24px;">
+        <div style="font-weight:700; color:var(--teal-900); font-size:12px; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">
+          ⚡ Attendee Fast Actions
+        </div>
+        <table class="shortcuts-table" style="margin-bottom: 22px;">
+          <tbody>
+            <tr>
+              <td><strong>Add New Attendee Form</strong><br><span class="text-muted" style="font-size:11px;">Instantly open fast desk intake form with focus on Full Name</span></td>
+              <td class="key-col"><kbd>Alt</kbd> + <kbd>A</kbd> or <kbd>N</kbd></td>
+            </tr>
+            <tr>
+              <td><strong>Quick Save Attendee</strong><br><span class="text-muted" style="font-size:11px;">Save attendee without taking hands off keyboard</span></td>
+              <td class="key-col"><kbd>Ctrl</kbd> + <kbd>Enter</kbd></td>
+            </tr>
+            <tr>
+              <td><strong>Save &amp; Record Conversation</strong><br><span class="text-muted" style="font-size:11px;">Save attendee and immediately start audio recorder</span></td>
+              <td class="key-col"><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Enter</kbd></td>
+            </tr>
+            <tr>
+              <td><strong>Search Attendees Directory</strong><br><span class="text-muted" style="font-size:11px;">Jump to attendee directory and focus search box</span></td>
+              <td class="key-col"><kbd>/</kbd></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="font-weight:700; color:var(--teal-900); font-size:12px; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px;">
+          🧭 Screen Navigation
+        </div>
+        <table class="shortcuts-table">
+          <tbody>
+            <tr>
+              <td><strong>Attendees Directory Table</strong></td>
+              <td class="key-col"><kbd>Alt</kbd> + <kbd>L</kbd> or <kbd>L</kbd></td>
+            </tr>
+            <tr>
+              <td><strong>Executive Dashboard</strong></td>
+              <td class="key-col"><kbd>Alt</kbd> + <kbd>D</kbd> or <kbd>D</kbd></td>
+            </tr>
+            <tr>
+              <td><strong>Audio Recordings &amp; Transcripts</strong></td>
+              <td class="key-col"><kbd>Alt</kbd> + <kbd>R</kbd> or <kbd>R</kbd></td>
+            </tr>
+            <tr>
+              <td><strong>Close Active Modal / Cancel Form</strong></td>
+              <td class="key-col"><kbd>Esc</kbd></td>
+            </tr>
+            <tr>
+              <td><strong>Open This Shortcuts Guide</strong></td>
+              <td class="key-col"><kbd>?</kbd> or <kbd>Alt</kbd> + <kbd>K</kbd></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-foot" style="display:flex; justify-content:flex-end;">
+        <button type="button" class="btn btn-primary btn-sm" onclick="CRM_UI.closeAllModals()">Got it (Esc)</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =====================================================================
+       MODAL 12: CONVERT TRANSCRIPTION TO LEAD QUALIFICATION & ACTION
+       ===================================================================== -->
+  <div class="modal-backdrop" id="convertTranscriptModal" role="dialog" aria-modal="true" aria-labelledby="convertTranscriptModalTitle">
+    <div class="modal-card" style="max-width: 680px;">
+      <div class="modal-head">
+        <div>
+          <h3 class="modal-title" id="convertTranscriptModalTitle"><span>⚡</span> Convert Conversation Transcript</h3>
+          <div class="modal-sub">Use transcribed dialogue to qualify attendee, update startup pitch, or schedule follow-up.</div>
+        </div>
+        <button class="modal-close-x" onclick="CRM_UI.closeAllModals()">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 18px 24px;">
+        <input type="hidden" id="convertLeadId">
+        <input type="hidden" id="convertActivityId">
+
+        <!-- Transcript Excerpt Preview -->
+        <div style="background:var(--bg-subtle); border:1px solid var(--border-light); border-radius:var(--radius-sm); padding:12px; margin-bottom:16px;">
+          <div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--teal-800); letter-spacing:0.5px; margin-bottom:6px; display:flex; justify-content:space-between;">
+            <span>Transcribed Conversation</span>
+            <span id="convertAttendeeNameBadge" class="badge badge-teal">Attendee</span>
+          </div>
+          <div id="convertTranscriptPreview" style="font-size:12px; color:var(--ink-800); max-height:110px; overflow-y:auto; line-height:1.5; font-style:italic; background:#fff; padding:8px 10px; border-radius:4px; border:1px solid #e2e8f0;"></div>
+        </div>
+
+        <div style="font-weight:700; color:var(--teal-900); font-size:13px; margin-bottom:12px;">
+          Select How to Convert &amp; Apply:
+        </div>
+
+        <div class="form-grid-1" style="gap:12px;">
+          <!-- Option 1: Append to Attendee Notes & Problem/Need -->
+          <label class="convert-option-card" style="display:flex; align-items:flex-start; gap:10px; padding:12px; border:1px solid var(--border-light); border-radius:var(--radius-sm); background:#fff; cursor:pointer;">
+            <input type="checkbox" id="convertCheckNotes" checked style="margin-top:2px;">
+            <div class="convert-option-content" style="flex:1;">
+              <strong>Append to Attendee Notes &amp; Discussion History</strong>
+              <div class="text-muted" style="font-size:11px;">Saves the full transcribed dialogue to the contact's CRM notes &amp; Excel sheet.</div>
+            </div>
+          </label>
+
+          <!-- Option 2: Update Startup Pitch & Problem/Need -->
+          <label class="convert-option-card" style="display:flex; align-items:flex-start; gap:10px; padding:12px; border:1px solid var(--border-light); border-radius:var(--radius-sm); background:#fff; cursor:pointer;">
+            <input type="checkbox" id="convertCheckPitch" checked style="margin-top:2px;">
+            <div class="convert-option-content" style="flex:1;">
+              <strong>Update Capability / Problem &amp; Need</strong>
+              <div class="text-muted" style="font-size:11px;">Extracts key discussion focus into the Attendee's Problem or Need &amp; Capability Offered fields.</div>
+              <div id="convertPitchInputBox" style="margin-top:6px;">
+                <input type="text" class="form-input" id="convertProblemNeedInput" placeholder="Problem or Need identified in conversation..." style="font-size:12px; margin-bottom:6px;">
+              </div>
+            </div>
+          </label>
+
+          <!-- Option 3: Advance Stage & Set Next Action Follow-up -->
+          <label class="convert-option-card" style="display:flex; align-items:flex-start; gap:10px; padding:12px; border:1px solid var(--border-light); border-radius:var(--radius-sm); background:#fff; cursor:pointer;">
+            <input type="checkbox" id="convertCheckStage" checked style="margin-top:2px;">
+            <div class="convert-option-content" style="flex:1;">
+              <strong>Advance Lead Stage &amp; Schedule Follow-up Task</strong>
+              <div class="text-muted" style="font-size:11px;">Moves attendee forward in the ETM 2026 pipeline with actionable next steps.</div>
+              <div class="form-grid-2" style="margin-top:8px;">
+                <div>
+                  <label class="form-label" style="font-size:11px;">Advance Stage</label>
+                  <select class="form-select" id="convertTargetStage" style="font-size:12px;">
+                    <option value="Qualified" selected>Qualified</option>
+                    <option value="Meeting scheduled">Meeting scheduled</option>
+                    <option value="In discussion">In discussion</option>
+                    <option value="Proposal / pilot planning">Proposal / pilot planning</option>
+                    <option value="Converted">Converted (Incubated / MoU)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label" style="font-size:11px;">Follow-up Due Date</label>
+                  <input type="date" class="form-input" id="convertFollowUpDate" style="font-size:12px;">
+                </div>
+              </div>
+              <div style="margin-top:8px;">
+                <label class="form-label" style="font-size:11px;">Next Action</label>
+                <input type="text" class="form-input" id="convertNextAction" value="Review conversation transcript &amp; send incubation follow-up package" style="font-size:12px;">
+              </div>
+            </div>
+          </label>
+        </div>
+      </div>
+      <div class="modal-foot" style="display:flex; justify-content:space-between; align-items:center;">
+        <button type="button" class="btn btn-sm btn-outline-teal" onclick="CRM_UI.copyTranscriptFromConvertModal()">
+          <span>📋</span> Copy Transcript
+        </button>
+        <div class="flex-center gap-8">
+          <button type="button" class="btn btn-sm" onclick="CRM_UI.closeAllModals()">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm" id="btnApplyTranscriptConversion" onclick="CRM_UI.applyTranscriptConversion()">
+            <span>⚡</span> Apply Conversion to Attendee
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PostgreSQL / pgAdmin 4 Live Configuration Modal -->
+  <div class="modal-backdrop" id="postgresConfigModal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="pgModalTitle">
+    <div class="modal-box" style="max-width:540px;">
+      <div class="modal-head">
+        <h3 class="modal-title" id="pgModalTitle" style="display:flex; align-items:center; gap:8px;">
+          <span>🐘</span> PostgreSQL &amp; pgAdmin 4 Connection Settings
+        </h3>
+        <button class="modal-close-btn" type="button" onclick="CRM_UI.closeAllModals()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="text-muted" style="font-size:12px; margin-top:0;">
+          Connect Anna ETM CRM directly to your local PostgreSQL server (<code>postgresql-x64-18</code>) so data streams simultaneously into pgAdmin 4 parallel to Excel. Zero data loss policy: deleted attendees are removed from active dashboard pipelines but remain permanently queryable in pgAdmin logs.
+        </p>
+
+        <form id="postgresConfigForm" onsubmit="event.preventDefault(); CRM_UI.submitPostgresConfig();">
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label class="form-label" for="pgConfigHost">Host</label>
+              <input type="text" class="form-control" id="pgConfigHost" value="localhost" placeholder="localhost" required>
+            </div>
+            <div class="form-group" style="width:110px;">
+              <label class="form-label" for="pgConfigPort">Port</label>
+              <input type="number" class="form-control" id="pgConfigPort" value="5432" placeholder="5432" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label class="form-label" for="pgConfigUser">Superuser / Username</label>
+              <input type="text" class="form-control" id="pgConfigUser" value="postgres" placeholder="postgres" required>
+            </div>
+            <div class="form-group flex-1">
+              <label class="form-label" for="pgConfigPassword">Password</label>
+              <input type="password" class="form-control" id="pgConfigPassword" placeholder="Enter pgAdmin master password" autocomplete="current-password">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="pgConfigDb">Database Name</label>
+            <input type="text" class="form-control" id="pgConfigDb" value="anna_etm_crm" placeholder="anna_etm_crm" required>
+            <span class="form-help">Auto-created if it does not already exist on the server.</span>
+          </div>
+
+          <div id="pgModalFeedback" style="display:none; padding:10px 12px; border-radius:var(--radius-xs); font-size:12px; margin-top:12px;"></div>
+        </form>
+      </div>
+      <div class="modal-foot" style="display:flex; justify-content:space-between; align-items:center;">
+        <button type="button" class="btn btn-outline-teal btn-sm" onclick="CRM_UI.downloadPostgresSchema()">
+          <span>📄</span> Download SQL Schema (.sql)
+        </button>
+        <div class="flex-center gap-8">
+          <button type="button" class="btn btn-sm" onclick="CRM_UI.closeAllModals()">Cancel</button>
+          <button type="button" class="btn btn-primary btn-sm" id="btnTestAndSavePgConfig" onclick="CRM_UI.submitPostgresConfig()">
+            <span>🔌</span> Test &amp; Connect Live
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Shelf -->
+  <div class="toast-shelf" id="toastShelf"></div>
+
+  <!-- CRM JavaScript Modules -->
+  <script src="js/data.js"></script>
+  <script src="js/duplicate.js"></script>
+  <script src="js/excel.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/recorder.js"></script>
+  <script src="js/ui.js"></script>
+</body>
+</html>

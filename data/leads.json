@@ -1,0 +1,19 @@
+[
+  {
+    "leadId": "LEAD-2026-TEST01",
+    "fullName": "Dr. Rohit Test Innovator",
+    "phone": "9840999999",
+    "email": "rohit.test@anna-incubator.org",
+    "jobTitle": "Lead Researcher",
+    "organisation": "",
+    "organisationType": "Startup / DeepTech",
+    "readinessLevel": "TRL 4 - Lab Validation (Breadboard)",
+    "stage": "New",
+    "priority": "High",
+    "consent": "Yes",
+    "notes": "Testing Page 1 fast intake without mandatory organisation.\n[Recorded Dialogue 2026-10-24]: In-person conversation with Dr. Rohit Test Innovator () at Anna Incubator stall A-14. Sector: DeepTech / Energy. Incubation track: Incubation & Mentorship. Discussed technology readiness, pilot deployment roadmap, and agreed on incubation evaluation follow-up.",
+    "latestTranscript": "In-person conversation with Dr. Rohit Test Innovator () at Anna Incubator stall A-14. Sector: DeepTech / Energy. Incubation track: Incubation & Mentorship. Discussed technology readiness, pilot deployment roadmap, and agreed on incubation evaluation follow-up.",
+    "latestTranscriptDate": "2026-10-24T16:28:53.721054",
+    "audioRecordingsCount": 1
+  }
+]

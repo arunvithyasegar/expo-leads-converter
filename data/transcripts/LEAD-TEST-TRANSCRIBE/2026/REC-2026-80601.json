@@ -1,0 +1,23 @@
+{
+  "recordingId": "REC-2026-80601",
+  "leadId": "LEAD-TEST-TRANSCRIBE",
+  "whishperJobId": "",
+  "status": "completed",
+  "language": "en",
+  "createdAt": "2026-10-24T11:18:00.601284",
+  "completedAt": "2026-10-24T11:18:00.601284",
+  "fullText": "Discussion with Dr. Alok Verma from Helios Solar Energy at Anna Incubator ETM 2026. Topics: Technology readiness level, commercialization roadmap, and incubation partnership.",
+  "segments": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "end": 2.0,
+      "text": "Discussion with Dr. Alok Verma from Helios Solar Energy at Anna Incubator ETM 2026. Topics: Technology readiness level, commercialization roadmap, and incubation partnership.",
+      "speaker": "Staff"
+    }
+  ],
+  "rawResponseRelativePath": "",
+  "editedText": "",
+  "editedAt": "",
+  "errorMessage": ""
+}

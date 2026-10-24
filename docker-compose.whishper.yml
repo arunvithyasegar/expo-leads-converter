@@ -1,0 +1,48 @@
+# ==============================================================================
+# Anna Incubator ETM 2026 CRM - Local Whishper Transcription Service
+# Open-source, self-hosted transcription engine using Whishper (Tag: v3.1.4)
+# ==============================================================================
+#
+# Quickstart:
+#   docker compose -f docker-compose.whishper.yml up -d
+#
+# Check health:
+#   curl http://127.0.0.1:8082/api/transcriptions
+#
+# Features:
+#   - 100% Local / Self-Hosted: No external cloud APIs, OpenAI tokens, or subscription keys.
+#   - Faster-Whisper CPU / GPU runtime.
+#   - Persistent model caching across restarts.
+#   - Internal loopback API consumed by CRM Node/Python adapter.
+# ==============================================================================
+
+version: '3.8'
+
+services:
+  # Standalone Whishper Engine (API + Web runtime)
+  whishper:
+    image: pluja/whishper:v3.1.4
+    container_name: anna_etm_whishper
+    restart: unless-stopped
+    ports:
+      - "8082:80"
+    environment:
+      - PORT=80
+      - WHISPER_MODELS_DIR=/app/models
+      - WHISPER_DEVICE=cpu          # Change to 'cuda' if NVIDIA GPU & nvidia-docker runtime available
+      - DEFAULT_MODEL=small         # 'base', 'small', 'medium'
+      - KEEP_MODELS_IN_MEMORY=true
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - whishper_models:/app/models
+      - whishper_uploads:/app/uploads
+      - whishper_data:/app/data
+
+volumes:
+  whishper_models:
+    name: anna_etm_whishper_models
+  whishper_uploads:
+    name: anna_etm_whishper_uploads
+  whishper_data:
+    name: anna_etm_whishper_data

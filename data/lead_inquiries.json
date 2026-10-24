@@ -1,0 +1,54 @@
+[
+  {
+    "inquiryId": "VELOCE-INQ-129181",
+    "firstName": "Priya",
+    "lastName": "Nair",
+    "workEmail": "priya.nair@tajhotels.test",
+    "phone": "+91 98401 23456",
+    "organization": "Taj Exotica Resort & Spa Goa",
+    "organizationType": "Independent Property / Resort",
+    "primaryObjective": "Win More Corporate RFPs",
+    "submittedAt": "2026-10-24T14:30:29.181665",
+    "status": "New",
+    "source": "Production Suite Test"
+  },
+  {
+    "inquiryId": "VELOCE-INQ-824672",
+    "firstName": "Priya",
+    "lastName": "Nair",
+    "workEmail": "priya.nair@tajhotels.test",
+    "phone": "+91 98401 23456",
+    "organization": "Taj Exotica Resort & Spa Goa",
+    "organizationType": "Independent Property / Resort",
+    "primaryObjective": "Win More Corporate RFPs",
+    "submittedAt": "2026-10-24T13:42:04.672165",
+    "status": "New",
+    "source": "Production Suite Test"
+  },
+  {
+    "inquiryId": "VELOCE-INQ-149734",
+    "firstName": "Sophia",
+    "lastName": "Reed",
+    "workEmail": "sophia.reed@grandhyatt.test",
+    "phone": "+1 (555) 234-5678",
+    "organization": "Grand Hyatt Goa",
+    "organizationType": "Hotel Chain / Brand",
+    "primaryObjective": "Win More Corporate RFPs",
+    "submittedAt": "2026-10-24T13:30:49.734290",
+    "status": "New",
+    "source": "B2B SaaS Verification"
+  },
+  {
+    "inquiryId": "VELOCE-INQ-911133",
+    "firstName": "Marcus",
+    "lastName": "Vance",
+    "workEmail": "marcus.vance@marriott-test.com",
+    "phone": "+1 (415) 890-1234",
+    "organization": "Marriott Luxury Collection",
+    "organizationType": "Hotel Chain / Brand",
+    "primaryObjective": "Win More Corporate RFPs",
+    "submittedAt": "2026-10-24T13:28:31.133846",
+    "status": "New",
+    "source": "Automated Verification Suite"
+  }
+]

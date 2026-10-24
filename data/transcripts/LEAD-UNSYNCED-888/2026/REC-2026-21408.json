@@ -1,0 +1,23 @@
+{
+  "recordingId": "REC-2026-21408",
+  "leadId": "LEAD-UNSYNCED-888",
+  "whishperJobId": "",
+  "status": "completed",
+  "language": "auto",
+  "createdAt": "2026-10-23T18:23:41.404563",
+  "completedAt": "2026-10-24T15:00:30.816991",
+  "fullText": "Audio conversation recorded live at Anna Incubator stall (3.0s). Saved locally on disk in recordings/LEAD-UNSYNCED-888/2026/20261023_182341_NextGen-Clean-Fuels_REC-2026-21408.webm.",
+  "segments": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "end": 3.0,
+      "text": "Audio conversation recorded live at Anna Incubator stall (3.0s). Saved locally on disk in recordings/LEAD-UNSYNCED-888/2026/20261023_182341_NextGen-Clean-Fuels_REC-2026-21408.webm.",
+      "speaker": "Staff"
+    }
+  ],
+  "rawResponseRelativePath": "",
+  "editedText": "",
+  "editedAt": "",
+  "errorMessage": ""
+}

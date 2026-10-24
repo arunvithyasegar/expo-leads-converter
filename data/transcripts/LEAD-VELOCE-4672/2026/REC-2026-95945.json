@@ -1,0 +1,23 @@
+{
+  "recordingId": "REC-2026-95945",
+  "leadId": "LEAD-VELOCE-4672",
+  "whishperJobId": "",
+  "status": "completed",
+  "language": "en",
+  "createdAt": "2026-10-24T14:11:35.944258",
+  "completedAt": "2026-10-24T14:11:35.944258",
+  "fullText": "Discussion with Priya Nair from Taj Exotica Resort & Spa Goa at Anna Incubator ETM 2026. Topics: Technology readiness level, commercialization roadmap, and incubation partnership.",
+  "segments": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "end": 2.0,
+      "text": "Discussion with Priya Nair from Taj Exotica Resort & Spa Goa at Anna Incubator ETM 2026. Topics: Technology readiness level, commercialization roadmap, and incubation partnership.",
+      "speaker": "Staff"
+    }
+  ],
+  "rawResponseRelativePath": "",
+  "editedText": "",
+  "editedAt": "",
+  "errorMessage": ""
+}

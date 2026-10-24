@@ -1,0 +1,23 @@
+{
+  "recordingId": "REC-2026-71181",
+  "leadId": "LEAD-TEST-TRANSCRIBE-01",
+  "whishperJobId": "",
+  "status": "completed",
+  "language": "auto",
+  "createdAt": "2026-10-24T15:56:11.180852",
+  "completedAt": "2026-10-24T15:56:11.180852",
+  "fullText": "In-person pitch with test attendee on green hydrogen electrolyzer technology readiness for Anna Incubator cohort.",
+  "segments": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "end": 15.5,
+      "text": "In-person pitch with test attendee on green hydrogen electrolyzer technology readiness for Anna Incubator cohort.",
+      "speaker": "Staff"
+    }
+  ],
+  "rawResponseRelativePath": "",
+  "editedText": "",
+  "editedAt": "",
+  "errorMessage": ""
+}

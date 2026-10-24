@@ -1,0 +1,121 @@
+export interface HeroStat {
+  label: string;
+  value: string;
+}
+
+export interface CapabilityFeature {
+  id: string;
+  eyebrow: string;
+  heading: string;
+  description: string;
+  ctaText: string;
+  ctaLink: string;
+  align: 'text-left' | 'text-right';
+  benefits: string[];
+  mockupType: 'radar-discovery' | 'bid-workflow' | 'channel-matrix' | 'analytics-benchmarking';
+}
+
+export interface TrustPillar {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+export const HERO_DATA = {
+  eyebrow: "BUSINESS TRAVEL SOLUTIONS",
+  headline: "Veloce Transient: Where Global Travel Buyers Source & Book",
+  subheadline: "Attract, discover, and respond to high-yield corporate RFPs so you can grow your corporate travel business with intelligent automation.",
+  primaryCta: "Book a Demo",
+  secondaryCta: "Watch Platform Tour",
+  stats: [
+    { label: "Higher RFP Win Rate", value: "4.2X" },
+    { label: "Global Corporate Buyers", value: "85,000+" },
+    { label: "RFP Response Time Saved", value: "68%" }
+  ] as HeroStat[]
+};
+
+export const CAPABILITIES_DATA: CapabilityFeature[] = [
+  {
+    id: "growth-discovery",
+    eyebrow: "MARKET OPPORTUNITY & DISCOVERY",
+    heading: "Grow your corporate travel business with proactive buyer discovery",
+    description: "Develop and expand your corporate travel program. Identify corporations actively sourcing room nights in your market before RFPs are publicly issued.",
+    ctaText: "Discover new corporations in your market",
+    ctaLink: "#demo-form",
+    align: "text-left",
+    benefits: [
+      "Real-time RFP tender radar across 140+ metropolitan commercial hubs",
+      "Predictive account fit scoring based on historical booking patterns",
+      "Direct tender invitations from Fortune 500 procurement teams and global TMCs"
+    ],
+    mockupType: "radar-discovery"
+  },
+  {
+    id: "workflow-rfp",
+    eyebrow: "INTELLIGENT RFP WORKFLOW",
+    heading: "Manage your corporate travel business more efficiently",
+    description: "Make managing and responding to RFPs effortless and negotiate smarter with intelligent rate insights and automated margin optimization powered by VeloceIQ™.",
+    ctaText: "Easily manage your corporate RFPs",
+    ctaLink: "#demo-form",
+    align: "text-right",
+    benefits: [
+      "Automated multi-property rate authoring with corporate policy compliance",
+      "Intelligent margin recommendations tailored to compset demand spikes",
+      "Centralized contract negotiation history with real-time audit trails"
+    ],
+    mockupType: "bid-workflow"
+  },
+  {
+    id: "distribution-accuracy",
+    eyebrow: "RATE & CONTENT DISTRIBUTION",
+    heading: "Distribute your information accurately and consistently across all channels",
+    description: "Streamline your content to display accurate rates, room details, and negotiated amenities across global distribution systems and booking tools without manual errors.",
+    ctaText: "Automate your rate and content distribution",
+    ctaLink: "#demo-form",
+    align: "text-left",
+    benefits: [
+      "Direct syndication to Sabre, Amadeus, Travelport, and corporate OBTs",
+      "Instant rate parity auditing with automated discrepancy detection",
+      "Unified room type, cancellation term, and amenity taxonomy mapping"
+    ],
+    mockupType: "channel-matrix"
+  },
+  {
+    id: "evaluation-analytics",
+    eyebrow: "PERFORMANCE BENCHMARKING",
+    heading: "Evaluate your rates and market performance across systems",
+    description: "Compare your historical bidding data and negotiated rates to see how you stack up against your competitive set and identify high-value yield opportunities.",
+    ctaText: "Audit and improve your performance",
+    ctaLink: "#demo-form",
+    align: "text-right",
+    benefits: [
+      "Anonymized competitive set ADR and RevPAR benchmark indices",
+      "Lost bid root-cause diagnostics across pricing, location, and terms",
+      "Season-ahead demand forecasting to capture peak corporate travel windows"
+    ],
+    mockupType: "analytics-benchmarking"
+  }
+];
+
+export const TRUST_PILLARS: TrustPillar[] = [
+  {
+    icon: "globe",
+    title: "Lasting Enterprise Scale",
+    description: "The capital, proven infrastructure, and staying power trusted by premier hospitality brands globally."
+  },
+  {
+    icon: "award",
+    title: "89% of Fortune 100",
+    description: "The world's premier enterprise travel buyers and procurement organizations actively source on our platform."
+  },
+  {
+    icon: "headphones",
+    title: "24/7 Dedicated Support",
+    description: "Around-the-clock advisory and technical support from our ~1,500 hospitality success specialists."
+  },
+  {
+    icon: "shield-check",
+    title: "Enterprise Security & Privacy",
+    description: "SOC 2 Type II certified, ISO 27001 verified, and GDPR/CCPA compliant data governance protects your rate confidentiality."
+  }
+];

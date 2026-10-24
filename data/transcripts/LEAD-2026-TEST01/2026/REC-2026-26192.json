@@ -1,0 +1,23 @@
+{
+  "recordingId": "REC-2026-26192",
+  "leadId": "LEAD-2026-TEST01",
+  "whishperJobId": "",
+  "status": "completed",
+  "language": "en",
+  "createdAt": "2026-10-24T16:23:46.191702",
+  "completedAt": "2026-10-24T16:23:46.191702",
+  "fullText": "In-person conversation with Dr. Rohit Test Innovator () at Anna Incubator stall A-14. Sector: DeepTech / Energy. Incubation track: Incubation & Mentorship. Discussed technology readiness, pilot deployment roadmap, and agreed on incubation evaluation follow-up.",
+  "segments": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "end": 14.5,
+      "text": "In-person conversation with Dr. Rohit Test Innovator () at Anna Incubator stall A-14. Sector: DeepTech / Energy. Incubation track: Incubation & Mentorship. Discussed technology readiness, pilot deployment roadmap, and agreed on incubation evaluation follow-up.",
+      "speaker": "Staff"
+    }
+  ],
+  "rawResponseRelativePath": "",
+  "editedText": "",
+  "editedAt": "",
+  "errorMessage": ""
+}

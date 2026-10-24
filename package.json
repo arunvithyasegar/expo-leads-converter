@@ -1,0 +1,10 @@
+{
+  "name": "anna-etm-lead-desk",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local JavaScript web app for Anna Incubator ETM 2026 attendee leads",
+  "scripts": {
+    "start": "node server.js",
+    "start:py": "python server.py"
+  }
+}

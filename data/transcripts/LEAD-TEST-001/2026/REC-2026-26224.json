@@ -1,0 +1,23 @@
+{
+  "recordingId": "REC-2026-26224",
+  "leadId": "LEAD-TEST-001",
+  "whishperJobId": "",
+  "status": "completed",
+  "language": "en",
+  "createdAt": "2026-10-23T17:08:46.224731",
+  "completedAt": "2026-10-24T15:00:34.022781",
+  "fullText": "Dr. Ramesh confirmed interest in Anna Incubator's Clean Fuel pilot program and asked for MoU template.",
+  "segments": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "end": 14.5,
+      "text": "Dr. Ramesh confirmed interest in Anna Incubator's Clean Fuel pilot program and asked for MoU template.",
+      "speaker": "Staff"
+    }
+  ],
+  "rawResponseRelativePath": "",
+  "editedText": "Dr. Ramesh confirmed interest in Anna Incubator's Clean Fuel pilot program and asked for MoU template.",
+  "editedAt": "2026-10-23T17:08:50.422764",
+  "errorMessage": ""
+}

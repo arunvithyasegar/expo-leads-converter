@@ -1,0 +1,23 @@
+{
+  "recordingId": "REC-2026-66174",
+  "leadId": "LEAD-ATTENDEE-999",
+  "whishperJobId": "",
+  "status": "completed",
+  "language": "auto",
+  "createdAt": "2026-10-23T18:22:46.172913",
+  "completedAt": "2026-10-24T15:00:32.952221",
+  "fullText": "Audio conversation recorded live at Anna Incubator stall (5.2s). Saved locally on disk in recordings/LEAD-ATTENDEE-999/2026/20261023_182246_Goa-Green-Hydrogen-Systems_REC-2026-66174.webm.",
+  "segments": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "end": 5.2,
+      "text": "Audio conversation recorded live at Anna Incubator stall (5.2s). Saved locally on disk in recordings/LEAD-ATTENDEE-999/2026/20261023_182246_Goa-Green-Hydrogen-Systems_REC-2026-66174.webm.",
+      "speaker": "Staff"
+    }
+  ],
+  "rawResponseRelativePath": "",
+  "editedText": "",
+  "editedAt": "",
+  "errorMessage": ""
+}

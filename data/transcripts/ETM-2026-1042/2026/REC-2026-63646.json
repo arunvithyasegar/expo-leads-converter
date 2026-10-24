@@ -1,0 +1,23 @@
+{
+  "recordingId": "REC-2026-63646",
+  "leadId": "ETM-2026-1042",
+  "whishperJobId": "",
+  "status": "completed",
+  "language": "auto",
+  "createdAt": "2026-10-24T13:06:03.645381",
+  "completedAt": "2026-10-24T13:06:03.645381",
+  "fullText": "Dr. Arvind explained the membrane purifier prototype and requested MoU draft for PSU refinery demonstration.",
+  "segments": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "end": 25.5,
+      "text": "Dr. Arvind explained the membrane purifier prototype and requested MoU draft for PSU refinery demonstration.",
+      "speaker": "Staff"
+    }
+  ],
+  "rawResponseRelativePath": "",
+  "editedText": "",
+  "editedAt": "",
+  "errorMessage": ""
+}

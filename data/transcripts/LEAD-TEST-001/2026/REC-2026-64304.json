@@ -1,0 +1,23 @@
+{
+  "recordingId": "REC-2026-64304",
+  "leadId": "LEAD-TEST-001",
+  "whishperJobId": "",
+  "status": "completed",
+  "language": "en",
+  "createdAt": "2026-10-23T17:06:04.304391",
+  "completedAt": "2026-10-24T15:00:34.918635",
+  "fullText": "Discussion with Attendee (Startup) at Anna Incubator booth. Collaboration interests, technology readiness, and next conversion steps confirmed.",
+  "segments": [
+    {
+      "id": 1,
+      "start": 0.0,
+      "end": 14.5,
+      "text": "Discussion with Attendee (Startup) at Anna Incubator booth. Collaboration interests, technology readiness, and next conversion steps confirmed.",
+      "speaker": "Staff"
+    }
+  ],
+  "rawResponseRelativePath": "",
+  "editedText": "",
+  "editedAt": "",
+  "errorMessage": ""
+}
